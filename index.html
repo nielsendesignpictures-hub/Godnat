@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Hugo & Anna – Godnat Historier</title>
-  <meta name="description" content="Hyggelige, sjove og eventyrlige godnathistorier til børn." />
+  <title>Hugo & Anna's – Godnat Historier</title>
+  <meta name="description" content="Hyggelige godnathistorier til børn." />
   <meta name="theme-color" content="#323232" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="page-home">
-  <div class="ambient ambient--one"></div>
-  <div class="ambient ambient--two"></div>
-
+<body>
   <header class="hero">
-    <div class="hero__media">
+    <div class="hero__image-wrap">
       <img
         src="banner.PNG"
         alt="Hugo og Anna sjove fjollede godnat historier"
@@ -21,81 +18,175 @@
       />
     </div>
 
-    <section class="hero__card">
-      <p class="overline">En lille eventyrbog til sengetid</p>
+    <div class="hero__card">
+      <p class="eyebrow">En lille eventyrbog til sengetid</p>
       <h1>Hugo & Anna<br />Godnat Historier</h1>
-      <p class="hero__lead">
-        Små ord bliver til store eventyr. Vælg en historie og læs den som en
-        rigtig lille godnatbog.
+      <p>
+        Små ord bliver til store eventyr. Her bor lune historier, skøre idéer og
+        hyggelige godnatstunder for hele familien.
       </p>
-    </section>
+    </div>
   </header>
 
-  <main class="shell">
-    <section class="glass-card intro-card">
-      <p class="overline">Godnatunivers</p>
-      <h2>Vælg aftenens bog</h2>
+  <main class="container">
+    <section class="intro card">
+      <p class="eyebrow">Godnatunivers</p>
+      <h2>Vælg aftenens historie</h2>
       <p>
-        Her ligger historierne som små bogforsider. Tryk på en bog for at åbne
-        historien i sin egen rolige læsevisning.
+        Tryk på en historie for at åbne den. Kun én historie er åben ad gangen,
+        så siden føles rolig og overskuelig.
       </p>
     </section>
 
-    <section class="book-grid" aria-label="Historieoversigt">
-      <a class="book-cover" href="historie-1.html">
-        <div class="book-cover__shine"></div>
-        <div class="book-cover__badge">✨</div>
-        <p class="book-cover__kicker">Historie 1</p>
-        <h2>Hugo, Anna & vennerne</h2>
-        <p class="book-cover__text">
-          En magisk historie om lys, hemmeligheder og nye venner.
-        </p>
-        <span class="book-cover__link">Åbn bog</span>
-      </a>
-
-      <a class="book-cover" href="historie-2.html">
-        <div class="book-cover__shine"></div>
-        <div class="book-cover__badge">🌙</div>
-        <p class="book-cover__kicker">Historie 2</p>
-        <h2>Hugo tiger & Anna ræv</h2>
-        <p class="book-cover__text">
-          Et fjollet skoveventyr med tiger, ræv og Stefan den gående prut.
-        </p>
-        <span class="book-cover__link">Åbn bog</span>
-      </a>
+    <section class="words card">
+      <p class="eyebrow">Dagens ord</p>
+      <h2>Ord bliver til eventyr</h2>
+      <div class="chips">
+        <span>tiger</span>
+        <span>ræv</span>
+        <span>prut</span>
+        <span>diamant</span>
+        <span>lommelygte</span>
+        <span>skygge</span>
+      </div>
     </section>
 
-    <section class="glass-card words-card">
-      <div class="words-card__top">
-        <div class="words-card__orb">✦</div>
-        <div>
-          <p class="overline">Dagens ord</p>
-          <h2>Ord bliver til eventyr</h2>
+    <section class="stories">
+      <details class="story" data-story="1">
+        <summary>
+          <div class="story__left">
+            <div class="story__icon">✨</div>
+            <div class="story__meta">
+              <p class="story__label">Historie 1</p>
+              <h3>Hugo, Anna & vennerne</h3>
+              <p class="story__preview">
+                En magisk historie om lys, hemmeligheder, ensomhed og nye venner
+                i en stille by.
+              </p>
+            </div>
+          </div>
+          <div class="story__arrow"></div>
+        </summary>
+
+        <div class="story__content">
+          <p>Der var engang, i en verden hvor ting ikke var helt som de plejede, tre meget usædvanlige venner.</p>
+          <p>Hugo var en lille lommelygte. Ikke bare en almindelig én – hans lys kunne nemlig ikke kun lyse mørke rum op, men også afsløre hemmeligheder. Når han tændte sit bløde, gyldne skær, kunne man se ting, man ellers aldrig lagde mærke til.</p>
+          <p>Anna var en pung. En elegant én af slagsen, fyldt med funklende diamanter. Men det var ikke bare værdien, der gjorde hende speciel – hendes diamanter kunne mærke folks intentioner. Hvis nogen havde et godt hjerte, glimtede de varmt. Hvis ikke… så blev de kolde og matte.</p>
+          <p>Og så var der Stefan. En gående højtaler. Han rullede rundt på små hjul og spillede altid den perfekte lyd til enhver situation. Glade beats når der var fest, rolige toner når nogen var triste – og nogle gange… sagde han ting højt, som andre kun turde tænke.</p>
+          <p>En dag vågnede de tre venner i en mørk og stille by. Alt var mærkeligt. Ingen mennesker. Ingen lyde. Ingen lys.</p>
+          <p>“Det her er ikke normalt…” sagde Stefan og udsendte en lav, spændingsfyldt brummen.</p>
+          <p>“Vent,” sagde Hugo og tændte sit lys.</p>
+          <p>Straks begyndte byen at ændre sig. Skyggerne bevægede sig. Spor dukkede op på jorden – som fodaftryk, der før havde været usynlige.</p>
+          <p>“Der er nogen… eller noget… vi skal finde,” sagde Hugo.</p>
+          <p>Anna åbnede sig en smule, og hendes diamanter begyndte at gløde svagt.</p>
+          <p>“Det er ikke ondt… men det er heller ikke helt godt,” hviskede hun.</p>
+          <p>De fulgte sporene gennem byen, ned ad små gader og ind i en gammel bygning. Jo længere de kom, desto højere blev stilheden – som om noget holdt vejret.</p>
+          <p>Pludselig stoppede Hugo.</p>
+          <p>“Her.”</p>
+          <p>Han lyste ind i et mørkt hjørne… og dér sad en lille skygge. Den rystede.</p>
+          <p>“Jeg… jeg tog lyset,” sagde skyggen stille. “Jeg ville bare have, at nogen lagde mærke til mig…”</p>
+          <p>Anna’s diamanter begyndte at gløde varmt.</p>
+          <p>“Du er ikke farlig,” sagde hun blidt. “Du er bare ensom.”</p>
+          <p>Stefan spillede en rolig, varm melodi, der fyldte rummet.</p>
+          <p>Hugo trådte frem og lyste blidt på skyggen.</p>
+          <p>“Du behøver ikke gemme dig. Vi kan dele lyset.”</p>
+          <p>Langsomt begyndte skyggen at ændre sig… og frem kom en lille figur, som aldrig før havde haft nogen at være sammen med.</p>
+          <p>Og i det øjeblik vendte lyset tilbage til hele byen.</p>
+          <p>Siden den dag var de ikke længere kun tre.</p>
+          <p>De var fire venner, der sammen sørgede for, at ingen – hverken mennesker, ting eller skygger – nogensinde følte sig glemt igen.</p>
+          <p>Og hvis man lytter godt efter en stille aften… kan man måske høre en blid melodi, se et varmt lys – og et lille glimt fra en diamant, der ved, at alt er, som det skal være. ✨</p>
         </div>
-      </div>
+      </details>
 
-      <div class="word-list">
-        <span class="word-pill">tiger</span>
-        <span class="word-pill">ræv</span>
-        <span class="word-pill">prut</span>
-        <span class="word-pill">diamant</span>
-        <span class="word-pill">lommelygte</span>
-        <span class="word-pill">skygge</span>
-      </div>
+      <details class="story" data-story="2">
+        <summary>
+          <div class="story__left">
+            <div class="story__icon">🌙</div>
+            <div class="story__meta">
+              <p class="story__label">Historie 2</p>
+              <h3>Hugo tiger & Anna ræv</h3>
+              <p class="story__preview">
+                Et fjollet skoveventyr med en tiger, en ræv og Stefan – den
+                gående prut.
+              </p>
+            </div>
+          </div>
+          <div class="story__arrow"></div>
+        </summary>
+
+        <div class="story__content">
+          <p>Der var engang en lille tiger, der hed Hugo. Han var 5 år gammel, havde stribede poter og elskede at løbe hurtigt gennem skoven. Hans bedste ven var Anna, en 6-årig ræv med en kæmpe fluffy hale og masser af gode idéer.</p>
+          <p>En morgen vågnede Hugo og råbte:</p>
+          <p>“Anna! Skal vi på eventyr i dag?”</p>
+          <p>Anna hoppede ud af sin rævehule.</p>
+          <p>“Ja! Lad os finde den hemmelige skovsti, som kun modige dyr kan finde!”</p>
+          <p>Men lige da de skulle til at gå, hørte de en lille “pfffft… pfffft…” lyd bag dem.</p>
+          <p>Ud fra busken kom Stefan… den gående prut.</p>
+          <p>Ja, du læste rigtigt. Stefan var en prut, men ikke en helt almindelig en. Han havde små ben, kunne gå rundt og var faktisk ret god til at hjælpe på eventyr.</p>
+          <p>“Godmorgen!” sagde prutten Stefan og viftede lidt i luften.</p>
+          <p>“Jeg kan hjælpe jer med at finde vej!”</p>
+          <p>Hugo begyndte at grine så meget, at hans tigerstriber næsten rystede.</p>
+          <p>“Men… du er jo en prut!”</p>
+          <p>“Ja,” sagde Stefan stolt. “Men jeg er en eventyr-prut.”</p>
+          <p>De tre venner gik ind i skoven. Pludselig kom de til en stor mudderpøl, som var alt for bred til at hoppe over.</p>
+          <p>Hugo sukkede.</p>
+          <p>“Åh nej… hvordan kommer vi over?”</p>
+          <p>Anna tænkte… men så sagde Stefan:</p>
+          <p>“Bare rolig… hold jer for næsen.”</p>
+          <p>PFFFFFFFFFFT!</p>
+          <p>Stefan lavede den største prutte-vind nogensinde, og vinden pustede blade, grene og små sten sammen til en bro.</p>
+          <p>“Se!” råbte Anna. “En prutte-bro!”</p>
+          <p>De gik over broen, og længere inde i skoven fandt de en stor skattekiste. Inde i den lå der… ikke guld…</p>
+          <p>…men kager, saftevand og is!</p>
+          <p>“Den bedste skat nogensinde!” sagde Hugo.</p>
+          <p>De satte sig i græsset og spiste.</p>
+          <p>Stefan sagde stolt:</p>
+          <p>“Det er derfor man altid skal have en prut med på eventyr.”</p>
+          <p>Anna grinede.</p>
+          <p>“Ja… men måske ikke lige når vi spiser.”</p>
+          <p>Alle tre grinede så højt, at fuglene i træerne begyndte at synge med.</p>
+          <p>Og fra den dag af vidste hele skoven én ting:</p>
+          <p>Hvis du skal på eventyr med en tiger og en ræv…</p>
+          <p>så er det faktisk ret smart at have en gående prut med.</p>
+          <p>Slut… pfffft! 😄</p>
+        </div>
+      </details>
     </section>
 
-    <section class="glass-card soon-card">
-      <p class="overline">Snart</p>
-      <h2>Ny bog kommer snart</h2>
+    <section class="soon card">
+      <p class="eyebrow">Snart</p>
+      <h2>Ny historie kommer snart</h2>
       <p>
-        Næste historie venter bare på aftenens ord. Måske bliver det en måne,
+        Næste eventyr venter bare på aftenens nye ord. Måske bliver det en måne,
         en frø og en flyvende tandbørste.
       </p>
     </section>
   </main>
 
   <footer class="footer">
-    <p>Hyggelige godnætter ✦</p>
+    <p>Hyggelige godnætter ✨</p>
   </footer>
+
+  <script>
+    const stories = document.querySelectorAll('.story');
+
+    stories.forEach((story) => {
+      const summary = story.querySelector('summary');
+
+      summary.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const isOpen = story.open;
+
+        stories.forEach((item) => {
+          item.open = false;
+        });
+
+        if (!isOpen) {
+          story.open = true;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
