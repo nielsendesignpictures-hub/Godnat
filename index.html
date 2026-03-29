@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Hugo & Anna – Godnat Historier</title>
   <meta
     name="description"
     content="En eventyrlig samling af hyggelige og sjove godnathistorier til børn."
   />
-
   <meta name="theme-color" content="#323232" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -35,86 +33,35 @@
         Små ord bliver til store eventyr. Her samles hyggelige historier,
         sjove figurer og gode godnatstunder for hele familien.
       </p>
-
-      <div class="hero__actions">
-        <a href="#oversigt" class="btn btn--primary">Se historier</a>
-        <a href="#historie-1" class="btn btn--ghost">Læs nu</a>
-      </div>
     </div>
   </header>
-
-  <nav class="topnav">
-    <a href="#top" class="topnav__brand">✨ Hugo & Anna</a>
-
-    <div class="topnav__links">
-      <a href="#oversigt">Oversigt</a>
-      <a href="#historie-1">Historie 1</a>
-      <a href="#historie-2">Historie 2</a>
-    </div>
-  </nav>
 
   <main class="container">
     <section class="intro-panel">
       <div class="intro-panel__inner">
         <p class="section-label">Godnatunivers</p>
-        <h2>Eventyr skabt af børnenes egne ord</h2>
+        <h2>Vælg en historie</h2>
         <p>
-          Hver aften siger børnene nogle sjove ord, og så bliver der lavet en ny
-          historie. Nogle gange bliver det magisk, andre gange fjollet – og altid
-          noget, man har lyst til at høre igen.
+          Tryk på en historie for at folde den ud. Så holder siden sig rolig,
+          enkel og nem at bruge ved sengetid.
         </p>
       </div>
     </section>
 
-    <section class="overview" id="oversigt">
-      <div class="section-heading">
-        <p class="section-label">Oversigt</p>
-        <h2>Vælg aftenens historie</h2>
-      </div>
-
-      <div class="story-grid">
-        <article class="story-card">
-          <div class="story-card__icon">✨</div>
-          <p class="story-card__kicker">Historie 1</p>
-          <h3>Hugo, Anna & vennerne</h3>
-          <p>
-            En varm og magisk historie om lys, hemmeligheder, ensomhed og nye
-            venskaber i en stille by.
-          </p>
-          <a href="#historie-1" class="story-card__link">Læs historien</a>
-        </article>
-
-        <article class="story-card">
-          <div class="story-card__icon">🌙</div>
-          <p class="story-card__kicker">Historie 2</p>
-          <h3>Hugo tiger & Anna ræv</h3>
-          <p>
-            Et fjollet skoveventyr med en modig tiger, en klog ræv og Stefan…
-            den gående prut.
-          </p>
-          <a href="#historie-2" class="story-card__link">Læs historien</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="quote-band">
-      <p>
-        “Tag dynen op om ørerne, lyt godt efter, og lad natten åbne døren til
-        næste eventyr.”
-      </p>
-    </section>
-
-    <section class="story-shell" id="historie-1">
-      <article class="story-book">
-        <div class="story-book__header">
-          <div>
-            <span class="pill">Historie 1</span>
-            <h2>Hugo, Anna & vennerne</h2>
+    <section class="accordion-list" aria-label="Oversigt over historier">
+      <details class="story-dropdown" open>
+        <summary class="story-dropdown__summary">
+          <div class="story-dropdown__left">
+            <span class="story-dropdown__icon">✨</span>
+            <div>
+              <p class="story-dropdown__label">Historie 1</p>
+              <h2>Hugo, Anna & vennerne</h2>
+            </div>
           </div>
-          <div class="story-book__symbol">✨</div>
-        </div>
+          <span class="story-dropdown__arrow">⌄</span>
+        </summary>
 
-        <div class="story-book__body">
+        <div class="story-dropdown__content">
           <p>
             Der var engang, i en verden hvor ting ikke var helt som de plejede,
             tre meget usædvanlige venner.
@@ -215,20 +162,21 @@
             ved, at alt er, som det skal være. ✨
           </p>
         </div>
-      </article>
-    </section>
+      </details>
 
-    <section class="story-shell" id="historie-2">
-      <article class="story-book">
-        <div class="story-book__header">
-          <div>
-            <span class="pill">Historie 2</span>
-            <h2>Hugo tiger & Anna ræv</h2>
+      <details class="story-dropdown">
+        <summary class="story-dropdown__summary">
+          <div class="story-dropdown__left">
+            <span class="story-dropdown__icon">🌙</span>
+            <div>
+              <p class="story-dropdown__label">Historie 2</p>
+              <h2>Hugo tiger & Anna ræv</h2>
+            </div>
           </div>
-          <div class="story-book__symbol">🌙</div>
-        </div>
+          <span class="story-dropdown__arrow">⌄</span>
+        </summary>
 
-        <div class="story-book__body">
+        <div class="story-dropdown__content">
           <p>
             Der var engang en lille tiger, der hed Hugo. Han var 5 år gammel,
             havde stribede poter og elskede at løbe hurtigt gennem skoven. Hans
@@ -324,7 +272,7 @@
 
           <p>Slut… pfffft! 😄</p>
         </div>
-      </article>
+      </details>
     </section>
   </main>
 
