@@ -15,13 +15,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="page-glow page-glow--one"></div>
-  <div class="page-glow page-glow--two"></div>
-  <div class="stars stars-a"></div>
-  <div class="stars stars-b"></div>
+  <div class="aurora aurora--one"></div>
+  <div class="aurora aurora--two"></div>
 
-  <header class="hero" id="top">
-    <div class="hero__frame">
+  <header class="hero">
+    <div class="hero__media">
       <img
         src="banner.PNG"
         alt="Hugo og Anna sjove fjollede godnat historier"
@@ -29,66 +27,66 @@
       />
     </div>
 
-    <div class="hero__panel">
-      <p class="hero__eyebrow">En lille eventyrbog til sengetid</p>
+    <section class="hero__card">
+      <p class="overline">En lille eventyrbog til sengetid</p>
       <h1>Hugo & Anna<br />Godnat Historier</h1>
       <p class="hero__lead">
-        Små ord bliver til store eventyr. Her bor hyggelige historier, fjollede
-        idéer og rare godnatstunder for hele familien.
+        Små ord bliver til store eventyr. Her bor lune historier, skøre idéer
+        og rare godnatstunder for hele familien.
       </p>
-    </div>
+    </section>
   </header>
 
-  <main class="container">
-    <section class="intro-card">
-      <p class="section-label">Godnatunivers</p>
+  <main class="shell">
+    <section class="glass-card intro-card">
+      <p class="overline">Godnatunivers</p>
       <h2>Vælg en historie</h2>
       <p>
         Tryk på en historie for at åbne den. Kun én historie er åben ad gangen,
-        så siden føles rolig og overskuelig ved sengetid.
+        så oplevelsen føles rolig, varm og overskuelig.
       </p>
     </section>
 
-    <section class="daily-words">
-      <div class="daily-words__head">
-        <div class="daily-words__icon">💭</div>
+    <section class="glass-card words-card">
+      <div class="words-card__top">
+        <div class="words-card__orb">✦</div>
         <div>
-          <p class="section-label">Dagens ord</p>
+          <p class="overline">Dagens ord</p>
           <h2>Ord bliver til eventyr</h2>
         </div>
       </div>
 
-      <div class="chip-list" aria-label="Dagens ord">
-        <span class="chip">tiger</span>
-        <span class="chip">ræv</span>
-        <span class="chip">prut</span>
-        <span class="chip">diamant</span>
-        <span class="chip">lommelygte</span>
-        <span class="chip">skygge</span>
+      <div class="word-list">
+        <span class="word-pill">tiger</span>
+        <span class="word-pill">ræv</span>
+        <span class="word-pill">prut</span>
+        <span class="word-pill">diamant</span>
+        <span class="word-pill">lommelygte</span>
+        <span class="word-pill">skygge</span>
       </div>
     </section>
 
-    <section class="accordion-list" aria-label="Oversigt over historier">
-      <details class="story-dropdown" data-story="historie-1">
-        <summary class="story-dropdown__summary">
-          <div class="story-dropdown__left">
-            <span class="story-dropdown__icon">✨</span>
-
-            <div class="story-dropdown__text">
-              <p class="story-dropdown__label">Historie 1</p>
-              <h2>Hugo, Anna & vennerne</h2>
-              <p class="story-dropdown__preview">
-                En magisk historie om lys, hemmeligheder, ensomhed og nye venner
-                i en stille by.
-              </p>
-            </div>
+    <section class="stories" aria-label="Historier">
+      <details class="story-book" data-story="historie-1">
+        <summary class="story-book__summary">
+          <div class="story-book__topline">
+            <span class="story-book__icon">✨</span>
+            <span class="story-book__kicker">Historie 1</span>
           </div>
 
-          <span class="story-dropdown__arrow" aria-hidden="true"></span>
+          <div class="story-book__headline">
+            <h3>Hugo, Anna & vennerne</h3>
+            <span class="story-book__chevron" aria-hidden="true"></span>
+          </div>
+
+          <p class="story-book__preview">
+            En magisk historie om lys, hemmeligheder, ensomhed og nye venner i
+            en stille by.
+          </p>
         </summary>
 
-        <div class="story-dropdown__content">
-          <div class="story-dropdown__inner">
+        <div class="story-book__content">
+          <div class="story-book__text">
             <p>
               Der var engang, i en verden hvor ting ikke var helt som de plejede,
               tre meget usædvanlige venner.
@@ -192,26 +190,26 @@
         </div>
       </details>
 
-      <details class="story-dropdown" data-story="historie-2">
-        <summary class="story-dropdown__summary">
-          <div class="story-dropdown__left">
-            <span class="story-dropdown__icon">🌙</span>
-
-            <div class="story-dropdown__text">
-              <p class="story-dropdown__label">Historie 2</p>
-              <h2>Hugo tiger & Anna ræv</h2>
-              <p class="story-dropdown__preview">
-                Et fjollet skoveventyr med en tiger, en ræv og Stefan – den
-                gående prut.
-              </p>
-            </div>
+      <details class="story-book" data-story="historie-2">
+        <summary class="story-book__summary">
+          <div class="story-book__topline">
+            <span class="story-book__icon">🌙</span>
+            <span class="story-book__kicker">Historie 2</span>
           </div>
 
-          <span class="story-dropdown__arrow" aria-hidden="true"></span>
+          <div class="story-book__headline">
+            <h3>Hugo tiger & Anna ræv</h3>
+            <span class="story-book__chevron" aria-hidden="true"></span>
+          </div>
+
+          <p class="story-book__preview">
+            Et fjollet skoveventyr med en tiger, en ræv og Stefan – den gående
+            prut.
+          </p>
         </summary>
 
-        <div class="story-dropdown__content">
-          <div class="story-dropdown__inner">
+        <div class="story-book__content">
+          <div class="story-book__text">
             <p>
               Der var engang en lille tiger, der hed Hugo. Han var 5 år gammel,
               havde stribede poter og elskede at løbe hurtigt gennem skoven. Hans
@@ -311,84 +309,55 @@
       </details>
     </section>
 
-    <section class="coming-soon">
-      <div class="coming-soon__icon">📖</div>
-      <div class="coming-soon__content">
-        <p class="section-label">Snart</p>
-        <h2>Ny historie kommer snart</h2>
-        <p>
-          Næste eventyr venter bare på aftenens nye ord. Måske bliver det en
-          måne, en frø og en flyvende tandbørste.
-        </p>
-      </div>
+    <section class="glass-card soon-card">
+      <p class="overline">Snart</p>
+      <h2>Ny historie kommer snart</h2>
+      <p>
+        Næste eventyr venter bare på aftenens nye ord. Måske bliver det en måne,
+        en frø og en flyvende tandbørste.
+      </p>
     </section>
   </main>
 
   <footer class="footer">
-    <p>Lavet til hyggelige aftener, varme dyner og store smil ✨</p>
-    <p class="footer__small">Tilføj flere historier direkte i index.html på GitHub Pages.</p>
+    <p>Hyggelige godnætter ✦</p>
   </footer>
 
-  <button class="to-top" type="button" aria-label="Tilbage til toppen">↑</button>
-
   <script>
-    const storyItems = document.querySelectorAll('.story-dropdown');
-    const toTopButton = document.querySelector('.to-top');
-    const STORAGE_KEY = 'godnatHistorieOpen';
+    const books = document.querySelectorAll('.story-book');
+    const storageKey = 'storybook-open-item';
 
-    function openStory(targetItem) {
-      storyItems.forEach((item) => {
-        if (item !== targetItem) {
-          item.open = false;
-        }
+    function openBook(target) {
+      books.forEach((book) => {
+        if (book !== target) book.open = false;
       });
-
-      targetItem.open = true;
-      localStorage.setItem(STORAGE_KEY, targetItem.dataset.story);
+      target.open = true;
+      localStorage.setItem(storageKey, target.dataset.story);
     }
 
-    storyItems.forEach((item) => {
-      const summary = item.querySelector('summary');
+    books.forEach((book) => {
+      const summary = book.querySelector('summary');
 
       summary.addEventListener('click', (event) => {
         event.preventDefault();
 
-        const isOpen = item.hasAttribute('open');
-
-        if (isOpen) {
-          item.open = false;
-          localStorage.removeItem(STORAGE_KEY);
+        if (book.open) {
+          book.open = false;
+          localStorage.removeItem(storageKey);
         } else {
-          openStory(item);
+          openBook(book);
           setTimeout(() => {
-            item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            book.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 120);
         }
       });
     });
 
-    const savedStory = localStorage.getItem(STORAGE_KEY);
-    if (savedStory) {
-      const savedItem = document.querySelector(`[data-story="${savedStory}"]`);
-      if (savedItem) {
-        savedItem.open = true;
-      }
+    const savedBook = localStorage.getItem(storageKey);
+    if (savedBook) {
+      const match = document.querySelector(`[data-story="${savedBook}"]`);
+      if (match) match.open = true;
     }
-
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        toTopButton.classList.add('is-visible');
-      } else {
-        toTopButton.classList.remove('is-visible');
-      }
-    });
-
-    toTopButton.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
   </script>
 </body>
 </html>
