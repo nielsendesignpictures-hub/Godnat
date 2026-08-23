@@ -781,7 +781,7 @@
   const GULV_NIVEAU = [
     { ankomst:7.5, tål:30, borde:3, madtid:5.5 },
     { ankomst:5.8, tål:24, borde:4, madtid:6.0 },
-    { ankomst:4.6, tål:19, borde:4, madtid:6.5 },
+    { ankomst:5.0, tål:20, borde:4, madtid:6.5 },
   ];
 
   /* ---------- Gaver ---------- */
@@ -1680,10 +1680,11 @@
       ['🙋', 'Tryk på et bord med <b>hånden oppe</b> for at tage bestillingen.'],
       ['🔔', 'Når køkkenet ringer: tryk på <b>lugen</b> og tag maden med på bakken (der er plads til to).'],
       ['💳', 'Tryk på bordet igen for at servere — og senere for at tage imod betalingen.'],
+      ['❤️', 'Fem glade gæster i træk giver et liv tilbage.'],
     ],
 
     tjener:null, gæster:[], boner:[], klar:[], bakke:[],
-    tilAnkomst:0, næsteId:1, betjente:0, turBonus:0,
+    tilAnkomst:0, næsteId:1, betjente:0, turBonus:0, glade:0,
 
     niveau(){ return GULV_NIVEAU[kerne.niveau]; },
     antalBorde(){ return this.niveau().borde; },
@@ -1691,7 +1692,7 @@
     start(){
       this.tjener = { x:0.5, y:0.72, målX:0.5, målY:0.72, opgave:null, travl:0, følger:null };
       this.gæster = []; this.boner = []; this.klar = []; this.bakke = [];
-      this.tilAnkomst = 1.2; this.næsteId = 1; this.betjente = 0; this.turBonus = 0;
+      this.tilAnkomst = 1.2; this.næsteId = 1; this.betjente = 0; this.turBonus = 0; this.glade = 0;
       this.hud();
     },
 
@@ -1750,11 +1751,17 @@
         g.tål -= dt * (fart[g.tilstand] || 0) / n.tål;
         if (g.tål <= 0 && this.tjener.følger !== g){
           const p = g.bord === null ? DØR : BORDPLADSER[g.bord];
+          const fuldtHus = g.tilstand === 'dør' && this.ledigtBord() < 0;
           this.gæster.splice(i, 1);
           this.bakke = this.bakke.filter(p2 => p2.gæst !== g);
           this.klar = this.klar.filter(p2 => p2.gæst !== g);
           this.boner = this.boner.filter(b => b.gæst !== g);
-          mistLiv(p.x, p.y, 'Gik igen! 😠');
+          if (fuldtHus){
+            // Der var ikke et bord at give dem — det er ikke tjenerens skyld
+            effekt(p.x, p.y - 0.04, 'Fuldt hus 😕', '#bfae95');
+          } else {
+            mistLiv(p.x, p.y, 'Gik igen! 😠');
+          }
           this.hud();
         }
       }
@@ -1882,11 +1889,22 @@
 
         if (gæst.tilstand === 'betale'){
           const drikkepenge = Math.round(gæst.tål * 10);
+          const glad = gæst.tål > 0.6;
           this.gæster = this.gæster.filter(g => g !== gæst);
           this.betjente++;
+          if (glad) this.glade++; else this.glade = 0;
           lydFærdig();
           giv(15 + drikkepenge, p.x, p.y - 0.05, '+' + (15 + drikkepenge) + ' 💰');
-          if (this.betjente % 5 === 0) råb(tilfældig(['Flot service! ⭐','Gæsterne er glade! 🎉']));
+          if (this.glade >= 5 && kerne.liv < 3){
+            this.glade = 0;
+            kerne.liv++;
+            lydGave();
+            effekt(p.x, p.y - 0.12, 'Stamgæst! ❤️', '#f2dda0');
+            konfettiRegn(p.x, p.y);
+            opdaterHUD();
+          } else if (this.betjente % 5 === 0){
+            råb(tilfældig(['Flot service! ⭐','Gæsterne er glade! 🎉']));
+          }
           this.hud();
           return;
         }
