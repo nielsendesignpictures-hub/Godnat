@@ -564,6 +564,13 @@
   }
 
   /* Menuen over burgerne på reglerskærmen */
+  .eyebrow-menu{
+    margin:0 0 2px;
+    font-size:.7rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--creme-daemp);
+  }
   .menukort{
     display:grid;
     gap:8px;
@@ -571,17 +578,17 @@
     text-align:left;
   }
   .menukort div{
-    padding:10px 12px;
-    border-radius:14px;
+    padding:8px 11px;
+    border-radius:12px;
     background:rgba(246,236,219,.05);
     border:1px solid rgba(217,180,91,.18);
-    font-size:.86rem;
-    line-height:1.35;
+    font-size:.78rem;
+    line-height:1.3;
   }
   .menukort b{
     display:block;
     font-family:var(--display);
-    font-size:1rem;
+    font-size:.95rem;
     color:var(--guld-lys);
   }
   .menukort em{ font-style:normal; color:var(--creme-daemp); }
@@ -659,9 +666,9 @@
         <h2 id="reglerTitel">Byg Burgeren</h2>
         <p id="reglerTekst"></p>
         <ul class="regler" id="reglerListe"></ul>
-        <div id="reglerEkstra"></div>
         <button class="knap" id="startKnap" type="button">SPIL</button>
         <button class="knap knap--rolig" id="tilbageKnap" type="button">Tilbage</button>
+        <div id="reglerEkstra"></div>
       </div>
     </div>
 
@@ -1299,8 +1306,7 @@
     regler: [
       ['👆', 'Hold fingeren på skærmen og <b>flyt bakken</b> til siderne.'],
       ['🍔', 'Grib fyldet <b>i den rigtige rækkefølge</b> — se bestillingen øverst.'],
-      ['🧦', 'Pas på skrald! Sokker og orme koster et liv.'],
-      ['❤️', 'Fang et <b>hjerte</b> — det giver et liv tilbage.'],
+      ['🧦', 'Pas på skrald — og fang et <b>❤️</b>, hvis du har mistet et liv.'],
     ],
 
     // egen tilstand
@@ -2167,7 +2173,8 @@
     if (spilId === 'koekken'){
       const kort = document.createElement('div');
       kort.className = 'menukort';
-      kort.innerHTML = BURGERE.map(b =>
+      kort.style.marginTop = '18px';
+      kort.innerHTML = '<p class="eyebrow-menu">Husets burgere</p>' + BURGERE.map(b =>
         '<div><b>' + b.navn + '</b>' +
         b.dele.map(id => DELE[id].navn).join(', ') +
         '. <em>' + b.sovs + '.</em></div>').join('');

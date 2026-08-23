@@ -13,6 +13,6 @@ for tag in ['<html lang="da">', '<head>', '</head>', '<body>', '</body>', '</htm
 s = re.sub(r'<meta[^>]*>\n?', '', s)
 titel = re.search(r'<title>.*?</title>', s, re.S).group(0)
 s = s.replace(titel + '\n', '').replace(titel, '')
-s = '<title>Byg Burgeren</title>\n' + s.lstrip()
+s = '<title>Café Kaiser Ventespil</title>\n' + s.lstrip()
 mål.write_text(s, encoding='utf-8')
 print('skrev', mål, len(s), 'tegn')
