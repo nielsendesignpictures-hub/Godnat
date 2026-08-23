@@ -4,9 +4,19 @@
   Alt ligger i denne ene fil: ingen billeder, ingen server, ingen data om gæsterne.
 
   SÅDAN GØR I DET TIL JERES:
-  1) Farver:  se ":root" i stilarket lige nedenfor (--guld, --rust, --sort ...).
-  2) Navn og undertekst: se "const CAFE" i koden nederst i filen.
-  3) Menu:    se MADVARER, SKRALD og OPSKRIFTNAVNE samme sted.
+  1) Farver:   se ":root" i stilarket lige nedenfor (--guld, --rust, --sort ...).
+  2) Navn:     se "const CAFE" i koden nederst i filen.
+  3) Menu:     se MADVARER, SKRALD og OPSKRIFTNAVNE samme sted.
+  4) Sværhed:  se "const NIVEAUER" — tre niveauer med hver sin fart og spawn-tempo.
+  5) Gaver:    se "const GAVER" — point-grænserne bestemmer, hvor svært det er at vinde.
+               Skru grænserne OP, hvis der gives for mange gaver.
+
+  GAVER OG KODER:
+  - Der kan hentes én gave pr. telefon pr. dag (gemmes lokalt i browseren).
+  - Gavekoden skifter hver dag. Personalet kan se dagens tre koder ved at åbne
+    siden med #personale bagerst i adressen.
+  - Koderne bekræftes ikke af en server: de er et hurtigt tjek ved kassen,
+    ikke en sikker rabatkupon.
 -->
 <html lang="da">
 <head>
@@ -70,11 +80,63 @@
     position:relative;
     z-index:3;
     display:flex;
-    align-items:center;
-    gap:10px;
-    padding:calc(env(safe-area-inset-top) + 8px) 10px 8px;
+    flex-direction:column;
+    gap:7px;
+    padding:calc(env(safe-area-inset-top) + 8px) 10px 9px;
     background:var(--sort);
     box-shadow:0 10px 26px rgba(0,0,0,.55), inset 0 -1px 0 rgba(217,180,91,.42);
+  }
+
+  .hud__raekke{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  /* Fremgang mod næste gave */
+  .fremgang{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .niveauchip{
+    flex:0 0 auto;
+    padding:3px 9px;
+    border-radius:999px;
+    background:linear-gradient(180deg, var(--rust), var(--rust-dyb));
+    border:1px solid rgba(217,180,91,.45);
+    color:var(--guld-lys);
+    font-family:var(--display);
+    font-weight:800;
+    font-size:.68rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .bar{
+    flex:1;
+    height:8px;
+    min-width:40px;
+    border-radius:999px;
+    background:rgba(246,236,219,.10);
+    border:1px solid rgba(217,180,91,.25);
+    overflow:hidden;
+  }
+  .bar__fyld{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--rust-lys), var(--guld-lys));
+    box-shadow:0 0 12px rgba(217,180,91,.55);
+    transition:width .35s ease;
+  }
+  .fremgang__tekst{
+    flex:0 0 auto;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.02em;
+    color:var(--creme-daemp);
+    white-space:nowrap;
   }
 
   .opskrift{
@@ -243,6 +305,111 @@
   .regler li b{ color:var(--guld-lys); }
   .regler .ikon{ font-size:1.4rem; flex:0 0 auto; }
 
+  /* Gaver */
+  .gaveliste{
+    display:grid;
+    gap:7px;
+    margin:0 0 20px;
+    text-align:left;
+  }
+  .gavelinje{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 12px;
+    border-radius:14px;
+    background:rgba(217,180,91,.06);
+    border:1px solid rgba(217,180,91,.22);
+  }
+  .gavelinje__ikon{ font-size:1.35rem; flex:0 0 auto; }
+  .gavelinje__tekst{ flex:1; min-width:0; font-size:.9rem; line-height:1.3; }
+  .gavelinje__point{
+    flex:0 0 auto;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:.92rem;
+    color:var(--guld);
+  }
+  .gavelinje--vundet{
+    background:rgba(217,180,91,.16);
+    border-color:rgba(217,180,91,.55);
+  }
+
+  .gavekort{
+    margin:0 0 18px;
+    padding:18px 16px;
+    border-radius:18px;
+    background:
+      radial-gradient(120% 100% at 50% 0%, rgba(217,180,91,.28), transparent 70%),
+      linear-gradient(180deg, #241a10, #140f0a);
+    border:1px solid rgba(217,180,91,.6);
+    box-shadow:0 0 30px rgba(217,180,91,.18) inset;
+  }
+  .gavekort__ikon{ font-size:2.4rem; line-height:1; }
+  .gavekort h3{
+    margin:8px 0 4px;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.3rem;
+    line-height:1.15;
+    color:var(--guld-lys);
+  }
+  .gavekort p{ margin:0 0 12px; font-size:.9rem; color:var(--creme-daemp); }
+  .kode{
+    display:inline-block;
+    padding:9px 16px;
+    border-radius:12px;
+    background:rgba(11,10,9,.72);
+    border:1px dashed rgba(217,180,91,.7);
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.5rem;
+    letter-spacing:.16em;
+    color:var(--guld-lys);
+  }
+  .gavekort small{
+    display:block;
+    margin-top:10px;
+    font-size:.76rem;
+    line-height:1.4;
+    color:var(--creme-daemp);
+  }
+  .naeste-gave{
+    margin:0 0 18px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(246,236,219,.05);
+    border:1px solid rgba(217,180,91,.2);
+    font-size:.9rem;
+    line-height:1.4;
+    color:var(--creme-daemp);
+  }
+  .naeste-gave b{ color:var(--guld-lys); }
+
+  .koder{
+    display:grid;
+    gap:8px;
+    margin:14px 0 6px;
+  }
+  .koder div{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(246,236,219,.05);
+    border:1px solid rgba(217,180,91,.22);
+    text-align:left;
+    font-size:.86rem;
+  }
+  .koder b{
+    font-family:var(--display);
+    font-size:1.1rem;
+    letter-spacing:.12em;
+    color:var(--guld-lys);
+  }
+
   .knap{
     display:block;
     width:100%;
@@ -297,7 +464,7 @@
   }
 
   .fod{
-    margin-top:22px;
+    margin-top:26px;
     font-size:.78rem;
     color:var(--creme-daemp);
     line-height:1.4;
@@ -339,16 +506,24 @@
 <div id="app">
 
   <header class="hud">
-    <div class="opskrift">
-      <span class="opskrift__navn" id="opskriftNavn">Klar?</span>
-      <span class="opskrift__liste" id="opskriftListe"></span>
+    <div class="hud__raekke">
+      <div class="opskrift">
+        <span class="opskrift__navn" id="opskriftNavn">Klar?</span>
+        <span class="opskrift__liste" id="opskriftListe"></span>
+      </div>
+      <div class="hud__tal">
+        <span class="point" id="point">0</span>
+        <span class="liv" id="liv">❤️❤️❤️</span>
+      </div>
+      <button class="ikonknap" id="lydKnap" type="button" aria-label="Lyd til/fra">🔇</button>
+      <button class="ikonknap" id="pauseKnap" type="button" aria-label="Pause">⏸</button>
     </div>
-    <div class="hud__tal">
-      <span class="point" id="point">0</span>
-      <span class="liv" id="liv">❤️❤️❤️</span>
+
+    <div class="fremgang">
+      <span class="niveauchip" id="niveauChip">Niveau 1</span>
+      <div class="bar"><div class="bar__fyld" id="barFyld"></div></div>
+      <span class="fremgang__tekst" id="fremgangTekst">🎫 ved 1500</span>
     </div>
-    <button class="ikonknap" id="lydKnap" type="button" aria-label="Lyd til/fra">🔇</button>
-    <button class="ikonknap" id="pauseKnap" type="button" aria-label="Pause">⏸</button>
   </header>
 
   <div class="flade">
@@ -365,7 +540,9 @@
           <li><span class="ikon">👆</span><span>Hold fingeren på skærmen og <b>flyt bakken</b> til siderne.</span></li>
           <li><span class="ikon">🍔</span><span>Grib ingredienserne <b>i den rigtige rækkefølge</b> — se opskriften øverst.</span></li>
           <li><span class="ikon">🧦</span><span>Pas på skrald! Sokker og orme koster et liv.</span></li>
+          <li><span class="ikon">❤️</span><span>Fang et <b>hjerte</b> — det giver et liv tilbage.</span></li>
         </ul>
+        <div class="gaveliste" id="gaveListe"></div>
         <button class="knap" id="startKnap" type="button">SPIL</button>
         <p class="fod" id="rekordTekst"></p>
       </div>
@@ -393,8 +570,23 @@
           <div><b id="slutBurgere">0</b><span>Burgere</span></div>
           <div><b id="slutRekord">0</b><span>Rekord</span></div>
         </div>
+        <div id="gaveBoks"></div>
         <button class="knap" id="igenKnap" type="button">SPIL IGEN</button>
         <p class="fod">Tip: Vent med at spise til maden kommer 😉</p>
+      </div>
+    </div>
+    <!-- PERSONALE (åbnes med #personale i adressen) -->
+    <div class="overlay skjult" id="personaleSkaerm">
+      <div class="kort">
+        <span class="maerke">Personale</span>
+        <h2>Dagens gavekoder</h2>
+        <p id="personaleDato"></p>
+        <div class="koder" id="personaleKoder"></div>
+        <p class="fod">
+          Koderne skifter hver dag. En gæst kan højst hente én gave pr. telefon pr. dag.
+          Koden vises på gæstens skærm — tjek at datoen er dagens.
+        </p>
+        <button class="knap knap--rolig" id="lukPersonale" type="button">Luk</button>
       </div>
     </div>
   </div>
@@ -410,7 +602,26 @@
   const CAFE = {
     navn: 'Café Kaiser',                     // ← cafékædens navn
     slogan: 'Spil mens maden bliver lavet.', // ← lille undertekst på startskærmen
+    kodeSalt: 'kaiser-2026',                 // ← skift denne, og alle gavekoder skifter
   };
+
+  /* ---------- De tre niveauer ---------- */
+  /* "fra" er point-grænsen hvor niveauet starter. Skru på fart og spawn
+     hvis spillet skal være lettere eller sværere. */
+  const NIVEAUER = [
+    { navn:'Niveau 1', kald:'Opvarmning',    fra:0,    fart:0.30, ekstra:0.10, spawn:1.05, skrald:0.10, længde:2, udvalg:4 },
+    { navn:'Niveau 2', kald:'Frokostpres',   fra:450,  fart:0.46, ekstra:0.13, spawn:0.78, skrald:0.18, længde:3, udvalg:6 },
+    { navn:'Niveau 3', kald:'Kaiser-vagten', fra:1100, fart:0.64, ekstra:0.17, spawn:0.60, skrald:0.22, længde:4, udvalg:9 },
+  ];
+
+  /* ---------- Gaver ---------- */
+  /* Point-grænserne er sat højt med vilje: de kan nås af en dygtig spiller,
+     men ikke i hver eneste omgang. Skru "point" op, hvis der gives for mange gaver. */
+  const GAVER = [
+    { point: 1800, ikon:'🎫', titel:'10% på 1 valgfri ret',    detalje:'Ved næste besøg' },
+    { point: 3200, ikon:'🥤', titel:'1 gratis lille drikkevare', detalje:'Valgfri, ved næste besøg' },
+    { point: 5000, ikon:'🏆', titel:'10% på hele regningen',    detalje:'Ved næste besøg' },
+  ];
 
   /* ---------- Indhold ---------- */
   const MADVARER = [
@@ -446,6 +657,10 @@
   const slutSkærm   = document.getElementById('slutSkaerm');
   const lydKnap     = document.getElementById('lydKnap');
   const pauseKnap   = document.getElementById('pauseKnap');
+  const elNiveauChip   = document.getElementById('niveauChip');
+  const elBarFyld      = document.getElementById('barFyld');
+  const elFremgang     = document.getElementById('fremgangTekst');
+  const personaleSkærm = document.getElementById('personaleSkaerm');
 
   document.getElementById('cafeNavn').textContent = CAFE.navn;
   document.getElementById('cafeSlogan').textContent = CAFE.slogan;
@@ -459,6 +674,43 @@
   }
   function gemRekord(v){
     try { localStorage.setItem(REKORD_NØGLE, String(v)); } catch(e){}
+  }
+
+  /* ---------- Dagens gave (én pr. telefon pr. dag) ---------- */
+  const GAVE_NØGLE = 'kaiser-dagens-gave';
+
+  function iDag(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function hentDagensGave(){
+    try {
+      const rå = JSON.parse(localStorage.getItem(GAVE_NØGLE) || 'null');
+      if (rå && rå.dato === iDag()) return rå.trin;
+    } catch(e){}
+    return -1;
+  }
+
+  function gemDagensGave(trin){
+    try { localStorage.setItem(GAVE_NØGLE, JSON.stringify({ dato: iDag(), trin })); } catch(e){}
+  }
+
+  /* Kode der skifter hver dag — personalet kan se dagens koder på #personale */
+  function gaveKode(trin, dato){
+    const tekst = CAFE.kodeSalt + '|' + dato + '|' + trin;
+    let h = 2166136261;
+    for (let i = 0; i < tekst.length; i++){
+      h ^= tekst.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    const tegn = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let kode = '';
+    for (let i = 0; i < 4; i++){
+      h = Math.imul(h ^ (h >>> 13), 0x5bd1e995);
+      kode += tegn[(h >>> 0) % tegn.length];
+    }
+    return 'K' + (trin + 1) + '-' + kode;
   }
 
   /* ---------- Lyd (uden lydfiler) ---------- */
@@ -482,6 +734,8 @@
   const lydRigtig  = () => { blip(680, .1, 'triangle'); setTimeout(() => blip(920, .12, 'triangle'), 70); };
   const lydForkert = () => blip(180, .2, 'square', .12);
   const lydFærdig  = () => { [520,660,780,1040].forEach((f,i) => setTimeout(() => blip(f,.14,'triangle'), i*90)); };
+  const lydNiveau  = () => { [400,600,800].forEach((f,i) => setTimeout(() => blip(f,.16,'sawtooth',.10), i*110)); };
+  const lydGave    = () => { [660,880,1180,1560,1980].forEach((f,i) => setTimeout(() => blip(f,.18,'triangle'), i*110)); };
 
   lydKnap.addEventListener('click', () => {
     lydTændt = !lydTændt;
@@ -513,7 +767,7 @@
   /* ---------- Spiltilstand ---------- */
   const spil = {
     kører:false, pause:false, slut:false,
-    point:0, liv:3, niveau:1, burgere:0, stime:0,
+    point:0, liv:3, niveau:0, burgere:0, stime:0, gaveTrin:-1,
     opskrift:[], opskriftNavn:'', bygget:0,
     ting:[], effekter:[], konfetti:[],
     bakkeX:0.5, bakkeMål:0.5,
@@ -526,9 +780,12 @@
   function tilfældig(liste){ return liste[Math.floor(Math.random() * liste.length)]; }
 
   /* ---------- Opskrifter ---------- */
+  function niveauNu(){ return NIVEAUER[spil.niveau]; }
+
   function nyOpskrift(){
-    const antal = Math.min(2 + Math.floor((spil.niveau - 1) / 2), 5);
-    const udvalg = MADVARER.slice(0, Math.min(3 + spil.niveau, MADVARER.length));
+    const n = niveauNu();
+    const antal = n.længde;
+    const udvalg = MADVARER.slice(0, Math.min(n.udvalg, MADVARER.length));
     spil.opskrift = Array.from({ length: antal }, () => tilfældig(udvalg));
     spil.opskriftNavn = tilfældig(OPSKRIFTNAVNE);
     spil.bygget = 0;
@@ -549,6 +806,38 @@
   function opdaterHUD(){
     elPoint.textContent = spil.point;
     elLiv.textContent = '❤️'.repeat(Math.max(0, spil.liv)) + '🖤'.repeat(Math.max(0, 3 - spil.liv));
+
+    const n = niveauNu();
+    elNiveauChip.textContent = n.navn;
+
+    const næste = GAVER[spil.gaveTrin + 1];
+    if (næste){
+      const forrige = spil.gaveTrin >= 0 ? GAVER[spil.gaveTrin].point : 0;
+      const del = (spil.point - forrige) / Math.max(1, næste.point - forrige);
+      elBarFyld.style.width = Math.max(0, Math.min(1, del)) * 100 + '%';
+      elFremgang.textContent = næste.ikon + ' ' + Math.max(0, næste.point - spil.point);
+    } else {
+      elBarFyld.style.width = '100%';
+      elFremgang.textContent = 'Alle gaver 🏆';
+    }
+  }
+
+  /* Niveau og gaver følger pointene */
+  function tjekMilepæle(){
+    while (spil.niveau < NIVEAUER.length - 1 && spil.point >= NIVEAUER[spil.niveau + 1].fra){
+      spil.niveau++;
+      const n = niveauNu();
+      råb(n.navn + ' — ' + n.kald + '! ⚡');
+      lydNiveau();
+    }
+    while (spil.gaveTrin < GAVER.length - 1 && spil.point >= GAVER[spil.gaveTrin + 1].point){
+      spil.gaveTrin++;
+      const g = GAVER[spil.gaveTrin];
+      råb('Gave låst op! ' + g.ikon);
+      konfettiRegn(0.5, 0.55);
+      konfettiRegn(spil.bakkeX, 0.80);
+      lydGave();
+    }
   }
 
   function råb(tekst){
@@ -561,27 +850,32 @@
   /* ---------- Genstande ---------- */
   function spawn(tvungenNødvendig = false){
     const nødvendig = spil.opskrift[spil.bygget];
-    const skraldChance = Math.min(0.12 + spil.niveau * 0.02, 0.26);
-    let emoji, erSkrald = false, erMad = true;
+    const n = niveauNu();
+    const skraldChance = n.skrald;
+    let emoji, erSkrald = false, erMad = true, erHjerte = false;
 
-    if (tvungenNødvendig || Math.random() < 0.42) {
+    // Sjældent ekstra liv, når man mangler et — så en dygtig spiller kan nå langt
+    const hjerteMuligt = spil.liv < 3 && !spil.ting.some(t => t.erHjerte);
+    if (!tvungenNødvendig && hjerteMuligt && Math.random() < 0.06){
+      emoji = '❤️'; erHjerte = true; erMad = false;
+    } else if (tvungenNødvendig || Math.random() < 0.42) {
       emoji = nødvendig.emoji;
     } else if (Math.random() < skraldChance) {
       emoji = tilfældig(SKRALD); erSkrald = true; erMad = false;
     } else {
-      emoji = tilfældig(MADVARER).emoji;
+      emoji = tilfældig(MADVARER.slice(0, Math.min(n.udvalg, MADVARER.length))).emoji;
     }
 
-    if (emoji === nødvendig.emoji) spil.sidenNødvendig = 0;
+    if (!erHjerte && emoji === nødvendig.emoji) spil.sidenNødvendig = 0;
 
     spil.ting.push({
       x: 0.12 + Math.random() * 0.76,
       y: -0.10,
       forrigeY: -0.12,
-      fart: (0.30 + spil.niveau * 0.028 + Math.random() * 0.10),
+      fart: n.fart + Math.random() * n.ekstra,
       drej: (Math.random() - 0.5) * 1.6,
       vinkel: 0,
-      emoji, erSkrald, erMad,
+      emoji, erSkrald, erMad, erHjerte,
     });
   }
 
@@ -607,6 +901,15 @@
   function grib(ting){
     const nødvendig = spil.opskrift[spil.bygget];
 
+    if (ting.erHjerte){
+      spil.liv = Math.min(3, spil.liv + 1);
+      lydGave();
+      effekt(ting.x, 0.78, 'Ekstra liv! ❤️', '#f2dda0');
+      konfettiRegn(ting.x, 0.80);
+      opdaterHUD();
+      return;
+    }
+
     if (ting.erSkrald){
       spil.liv--;
       spil.stime = 0;
@@ -625,6 +928,7 @@
       spil.point += 10 + bonus;
       lydRigtig();
       effekt(ting.x, 0.78, '+' + (10 + bonus), '#f2dda0');
+      tjekMilepæle();
       opdaterHUD();
       tegnOpskriftHUD();
 
@@ -645,7 +949,7 @@
     råb(tilfældig(ROS));
     konfettiRegn(spil.bakkeX, 0.80);
     spil.fløj = { x: spil.bakkeX, y: 0.80, liv: 1, ingredienser: spil.opskrift.slice() };
-    if (spil.burgere % 3 === 0) spil.niveau++;
+    tjekMilepæle();
     opdaterHUD();
     nyOpskrift();
   }
@@ -914,6 +1218,15 @@
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'rgba(217,122,78,.95)';
         ctx.stroke();
+      } else if (t.erHjerte){
+        // guldglorie om ekstra-livet
+        ctx.beginPath();
+        ctx.arc(0, 0, str * 0.56, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(217,180,91,.28)';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(242,221,160,.95)';
+        ctx.stroke();
       }
       tegnEmoji(t.emoji, 0, 0, str);
       ctx.restore();
@@ -967,7 +1280,7 @@
     spil.tilSpawn -= dt;
     if (spil.tilSpawn <= 0){
       spawn();
-      spil.tilSpawn = Math.max(0.42, 1.15 - spil.niveau * 0.06);
+      spil.tilSpawn = niveauNu().spawn * (0.85 + Math.random() * 0.3);
     }
     if (spil.sidenNødvendig > 2.6){
       spawn(true);
@@ -1071,7 +1384,8 @@
 
   function startSpil(){
     spil.kører = true; spil.pause = false; spil.slut = false;
-    spil.point = 0; spil.liv = 3; spil.niveau = 1; spil.burgere = 0; spil.stime = 0;
+    spil.point = 0; spil.liv = 3; spil.niveau = 0; spil.burgere = 0; spil.stime = 0;
+    spil.gaveTrin = -1;
     spil.ting = []; spil.effekter = []; spil.konfetti = []; spil.fløj = null;
     spil.bakkeX = spil.bakkeMål = 0.5;
     spil.tilSpawn = 0.5; spil.sidenNødvendig = 0; spil.ryst = 0;
@@ -1089,21 +1403,104 @@
     const rekord = Math.max(hentRekord(), spil.point);
     gemRekord(rekord);
 
+    // Dagens gave: den bedste, gæsten har nået i dag på denne telefon
+    const førDagen = hentDagensGave();
+    let dagensTrin = førDagen;
+    if (spil.gaveTrin > førDagen){
+      dagensTrin = spil.gaveTrin;
+      gemDagensGave(dagensTrin);
+    }
+    const vandtNu = spil.gaveTrin >= 0 && spil.gaveTrin > førDagen;
+
     document.getElementById('slutPoint').textContent = spil.point;
     document.getElementById('slutBurgere').textContent = spil.burgere;
     document.getElementById('slutRekord').textContent = rekord;
+
     document.getElementById('slutTitel').textContent =
-      spil.burgere === 0 ? 'Ups!' : (spil.point >= rekord ? 'Ny rekord! 🏆' : 'Godt gået!');
+      vandtNu ? 'Gave låst op! 🎉'
+              : (spil.burgere === 0 ? 'Ups!' : (spil.point >= rekord ? 'Ny rekord! 🏆' : 'Godt gået!'));
     document.getElementById('slutTekst').textContent =
       spil.burgere === 0 ? 'Prøv igen — du skal bare fange dem i rækkefølge.'
-                         : 'Du lavede ' + spil.burgere + (spil.burgere === 1 ? ' burger' : ' burgere') + ' til køkkenet.';
+                         : 'Du lavede ' + spil.burgere + (spil.burgere === 1 ? ' burger' : ' burgere') +
+                           ' og nåede ' + niveauNu().navn + '.';
+
+    tegnGaveBoks(dagensTrin, vandtNu);
     visSkærm(slutSkærm, true);
+  }
+
+  function tegnGaveBoks(dagensTrin, vandtNu){
+    const boks = document.getElementById('gaveBoks');
+    boks.innerHTML = '';
+
+    if (dagensTrin >= 0){
+      const g = GAVER[dagensTrin];
+      const kort = document.createElement('div');
+      kort.className = 'gavekort';
+      kort.innerHTML =
+        '<div class="gavekort__ikon">' + g.ikon + '</div>' +
+        '<h3>' + g.titel + '</h3>' +
+        '<p>' + g.detalje + '</p>' +
+        '<span class="kode">' + gaveKode(dagensTrin, iDag()) + '</span>' +
+        '<small>' + (vandtNu ? 'Vis skærmen til personalet, inden I går hjem.'
+                             : 'Dagens gave — den er allerede hentet på denne telefon.') +
+        '<br>Én gave pr. telefon pr. dag. Koden gælder i dag.</small>';
+      boks.appendChild(kort);
+      return;
+    }
+
+    const næste = GAVER[0];
+    const mangler = Math.max(0, næste.point - spil.point);
+    const linje = document.createElement('div');
+    linje.className = 'naeste-gave';
+    linje.innerHTML = 'Næste gave: ' + næste.ikon + ' <b>' + næste.titel + '</b> ved <b>' +
+                      næste.point + ' point</b>.<br>Du manglede ' + mangler + ' point.';
+    boks.appendChild(linje);
+  }
+
+  function tegnGaveListe(){
+    const liste = document.getElementById('gaveListe');
+    const dagensTrin = hentDagensGave();
+    liste.innerHTML = '';
+    GAVER.forEach((g, i) => {
+      const linje = document.createElement('div');
+      linje.className = 'gavelinje' + (i <= dagensTrin ? ' gavelinje--vundet' : '');
+      linje.innerHTML =
+        '<span class="gavelinje__ikon">' + (i <= dagensTrin ? '✅' : g.ikon) + '</span>' +
+        '<span class="gavelinje__tekst">' + g.titel + '</span>' +
+        '<span class="gavelinje__point">' + g.point + '</span>';
+      liste.appendChild(linje);
+    });
   }
 
   function visRekordPåStart(){
     const r = hentRekord();
-    document.getElementById('rekordTekst').textContent = r > 0 ? 'Din rekord: ' + r + ' point' : '';
+    document.getElementById('rekordTekst').textContent =
+      (r > 0 ? 'Din rekord: ' + r + ' point · ' : '') + 'Én gave pr. telefon pr. dag';
+    tegnGaveListe();
   }
+
+  /* ---------- Personaleskærm (#personale i adressen) ---------- */
+  function tjekPersonale(){
+    const åben = location.hash === '#personale';
+    if (åben){
+      const dato = iDag();
+      document.getElementById('personaleDato').textContent = 'Gælder i dag, ' + dato;
+      const boks = document.getElementById('personaleKoder');
+      boks.innerHTML = '';
+      GAVER.forEach((g, i) => {
+        const r = document.createElement('div');
+        r.innerHTML = '<span>' + g.ikon + ' ' + g.titel + '</span><b>' + gaveKode(i, dato) + '</b>';
+        boks.appendChild(r);
+      });
+      sætPause(true);
+    }
+    visSkærm(personaleSkærm, åben);
+  }
+  window.addEventListener('hashchange', tjekPersonale);
+  document.getElementById('lukPersonale').addEventListener('click', () => {
+    location.hash = '';
+    visSkærm(personaleSkærm, false);
+  });
 
   document.getElementById('startKnap').addEventListener('click', startSpil);
   document.getElementById('igenKnap').addEventListener('click', startSpil);
@@ -1122,6 +1519,7 @@
   tilpasStørrelse();
   visRekordPåStart();
   opdaterHUD();
+  tjekPersonale();
   requestAnimationFrame(løkke);
 })();
 </script>
