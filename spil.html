@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<!--
+  BYG BURGEREN — lille ventespil til caféen.
+  Alt ligger i denne ene fil: ingen billeder, ingen server, ingen data om gæsterne.
+
+  SÅDAN GØR I DET TIL JERES:
+  1) Farver:  se ":root" i stilarket lige nedenfor (--brand, --sekundaer, --creme ...).
+  2) Navn og undertekst: se "const CAFE" i koden nederst i filen.
+  3) Menu:    se MADVARER, SKRALD og OPSKRIFTNAVNE samme sted.
+-->
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2b1a12">
+<meta name="description" content="Byg Burgeren – et lille spil man kan spille mens man venter på sin mad.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Byg Burgeren – spil mens du venter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     JERES BRANDING SKIFTES HER  (farver)
+     Navn + slogan skiftes i JS-blokken nederst: se  const CAFE
+     ============================================================ */
+  :root{
+    --brand:        #e5533d;   /* primærfarve (knapper, accenter) */
+    --brand-moerk:  #b83a27;   /* mørkere variant af primærfarven */
+    --brand-lys:    #ffd9d1;   /* lys variant til tekst på mørk baggrund */
+    --sekundaer:    #f5a623;   /* sekundærfarve (point, stjerner) */
+    --creme:        #fff4e4;   /* lys flade / kort */
+    --brun:         #2b1a12;   /* mørk baggrund */
+    --brun-soft:    #4a2f21;   /* mellemmørk */
+    --groen:        #4caf6d;   /* "korrekt"-farve */
+    --blaek:        #2b1a12;   /* tekstfarve på lys baggrund */
+
+    --display:"Baloo 2", system-ui, "Segoe UI Rounded", "Arial Rounded MT Bold", sans-serif;
+    --body:"Nunito", system-ui, "Segoe UI", sans-serif;
+    --radius: 22px;
+    --skygge: 0 14px 34px rgba(0,0,0,.28);
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; height:100%; overflow:hidden; overscroll-behavior:none;}
+  body{
+    font-family:var(--body);
+    color:#fff;
+    background:var(--brun);
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:manipulation;
+  }
+
+  #app{
+    position:relative;
+    width:100%;
+    height:100dvh;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:relative;
+    z-index:3;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:calc(env(safe-area-inset-top) + 8px) 10px 8px;
+    background:var(--brun);
+    box-shadow:0 6px 18px rgba(43,26,18,.25);
+  }
+
+  .opskrift{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:rgba(255,244,228,.14);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(6px);
+  }
+  .opskrift__navn{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:.86rem;
+    letter-spacing:.02em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:46%;
+    opacity:.92;
+  }
+  .opskrift__liste{
+    display:flex;
+    gap:4px;
+    align-items:center;
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+  }
+  .ingrediens{
+    font-size:clamp(1.05rem, 4.6vw, 1.5rem);
+    line-height:1;
+    filter:grayscale(.75);
+    opacity:.5;
+    transition:transform .18s ease, opacity .18s ease, filter .18s ease;
+  }
+  .ingrediens.klar{ filter:none; opacity:.4; transform:scale(.82); }
+  .ingrediens.naeste{
+    filter:none;
+    opacity:1;
+    animation:puls 1s ease-in-out infinite;
+  }
+  @keyframes puls{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.28); }
+  }
+
+  .hud__tal{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    line-height:1;
+    min-width:60px;
+  }
+  .point{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.5rem;
+    color:var(--sekundaer);
+  }
+  .liv{ font-size:.95rem; letter-spacing:1px; margin-top:3px; }
+
+  .ikonknap{
+    width:42px; height:42px;
+    flex:0 0 auto;
+    display:grid; place-items:center;
+    font-size:1.15rem;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,244,228,.14);
+    color:#fff;
+    cursor:pointer;
+  }
+  .ikonknap:active{ transform:scale(.94); }
+
+  /* ---------- Spilleflade ---------- */
+  .flade{ position:relative; flex:1; min-height:0; }
+  canvas{ display:block; width:100%; height:100%; touch-action:none; }
+
+  /* ---------- Overlays ---------- */
+  .overlay{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:grid;
+    place-items:center;
+    padding:16px;
+    background:rgba(43,26,18,.72);
+    backdrop-filter:blur(10px);
+  }
+  .overlay.skjult{ display:none; }
+
+  .kort{
+    width:min(100%, 420px);
+    max-height:100%;
+    overflow-y:auto;
+    padding:22px 20px 20px;
+    border-radius:var(--radius);
+    background:var(--creme);
+    color:var(--blaek);
+    box-shadow:var(--skygge);
+    text-align:center;
+  }
+
+  .maerke{
+    display:inline-block;
+    padding:5px 14px;
+    border-radius:999px;
+    background:var(--brand);
+    color:#fff;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:.78rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+
+  .kort h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(1.9rem, 9vw, 2.7rem);
+    line-height:1;
+    margin:12px 0 6px;
+  }
+  .kort h2{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(1.6rem, 7.5vw, 2.2rem);
+    line-height:1.05;
+    margin:10px 0 4px;
+  }
+  .kort p{ margin:0 0 12px; font-size:1rem; line-height:1.5; color:#5a4638; }
+
+  .regler{
+    list-style:none;
+    margin:14px 0 18px;
+    padding:0;
+    text-align:left;
+    display:grid;
+    gap:8px;
+  }
+  .regler li{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 12px;
+    border-radius:14px;
+    background:#fff;
+    font-size:.95rem;
+    line-height:1.35;
+    box-shadow:0 3px 10px rgba(43,26,18,.07);
+  }
+  .regler .ikon{ font-size:1.4rem; flex:0 0 auto; }
+
+  .knap{
+    display:block;
+    width:100%;
+    padding:16px 18px;
+    border:0;
+    border-radius:18px;
+    background:var(--brand);
+    color:#fff;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.25rem;
+    letter-spacing:.02em;
+    cursor:pointer;
+    box-shadow:0 6px 0 var(--brand-moerk);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .knap:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--brand-moerk); }
+  .knap + .knap{ margin-top:10px; }
+  .knap--rolig{
+    background:#fff;
+    color:var(--blaek);
+    box-shadow:0 6px 0 #e2d3c1;
+    font-size:1.05rem;
+  }
+  .knap--rolig:active{ box-shadow:0 2px 0 #e2d3c1; }
+
+  .resultat{
+    display:flex;
+    gap:10px;
+    margin:14px 0 16px;
+  }
+  .resultat div{
+    flex:1;
+    padding:12px 8px;
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 3px 10px rgba(43,26,18,.07);
+  }
+  .resultat b{
+    display:block;
+    font-family:var(--display);
+    font-size:1.7rem;
+    line-height:1;
+    color:var(--brand);
+  }
+  .resultat span{
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    color:#8a7565;
+  }
+
+  .fod{
+    margin-top:22px;
+    font-size:.78rem;
+    color:#8a7565;
+    line-height:1.4;
+  }
+
+  /* Stor midtskærms-besked (fx "Værsgo!") */
+  .raab{
+    position:absolute;
+    left:50%;
+    top:38%;
+    z-index:4;
+    transform:translate(-50%,-50%) scale(.6);
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(2rem, 11vw, 3.4rem);
+    color:var(--brand-moerk);
+    text-shadow:
+      3px 0 0 #fff, -3px 0 0 #fff, 0 3px 0 #fff, 0 -3px 0 #fff,
+      2px 2px 0 #fff, -2px 2px 0 #fff, 2px -2px 0 #fff, -2px -2px 0 #fff,
+      0 10px 22px rgba(120,60,25,.30);
+    opacity:0;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .raab.vis{ animation:raab 1.1s ease-out forwards; }
+  @keyframes raab{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(.6) rotate(-4deg); }
+    22%{ opacity:1; transform:translate(-50%,-50%) scale(1.12) rotate(2deg); }
+    40%{ transform:translate(-50%,-50%) scale(1) rotate(0deg); }
+    100%{ opacity:0; transform:translate(-50%,-58%) scale(1); }
+  }
+
+  @media (min-height: 720px){
+    .kort{ padding:28px 26px 24px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="hud">
+    <div class="opskrift">
+      <span class="opskrift__navn" id="opskriftNavn">Klar?</span>
+      <span class="opskrift__liste" id="opskriftListe"></span>
+    </div>
+    <div class="hud__tal">
+      <span class="point" id="point">0</span>
+      <span class="liv" id="liv">❤️❤️❤️</span>
+    </div>
+    <button class="ikonknap" id="lydKnap" type="button" aria-label="Lyd til/fra">🔇</button>
+    <button class="ikonknap" id="pauseKnap" type="button" aria-label="Pause">⏸</button>
+  </header>
+
+  <div class="flade">
+    <canvas id="laerred"></canvas>
+    <div class="raab" id="raab"></div>
+
+    <!-- START -->
+    <div class="overlay" id="startSkaerm">
+      <div class="kort">
+        <span class="maerke" id="cafeNavn">Caféen</span>
+        <h1>Byg Burgeren</h1>
+        <p id="cafeSlogan">Spil mens maden bliver lavet.</p>
+        <ul class="regler">
+          <li><span class="ikon">👆</span><span>Hold fingeren på skærmen og <b>flyt bakken</b> til siderne.</span></li>
+          <li><span class="ikon">🍔</span><span>Grib ingredienserne <b>i den rigtige rækkefølge</b> — se opskriften øverst.</span></li>
+          <li><span class="ikon">🧦</span><span>Pas på skrald! Sokker og orme koster et liv.</span></li>
+        </ul>
+        <button class="knap" id="startKnap" type="button">SPIL</button>
+        <p class="fod" id="rekordTekst"></p>
+      </div>
+    </div>
+
+    <!-- PAUSE -->
+    <div class="overlay skjult" id="pauseSkaerm">
+      <div class="kort">
+        <span class="maerke">Pause</span>
+        <h2>Vi venter på dig</h2>
+        <p>Spillet er sat på pause — dine point er gemt.</p>
+        <button class="knap" id="fortsaetKnap" type="button">SPIL VIDERE</button>
+        <button class="knap knap--rolig" id="afslutKnap" type="button">Start forfra</button>
+      </div>
+    </div>
+
+    <!-- SLUT -->
+    <div class="overlay skjult" id="slutSkaerm">
+      <div class="kort">
+        <span class="maerke">Færdig</span>
+        <h2 id="slutTitel">Godt gået!</h2>
+        <p id="slutTekst">Køkkenet er imponeret.</p>
+        <div class="resultat">
+          <div><b id="slutPoint">0</b><span>Point</span></div>
+          <div><b id="slutBurgere">0</b><span>Burgere</span></div>
+          <div><b id="slutRekord">0</b><span>Rekord</span></div>
+        </div>
+        <button class="knap" id="igenKnap" type="button">SPIL IGEN</button>
+        <p class="fod">Tip: Vent med at spise til maden kommer 😉</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ============================================================
+     JERES BRANDING (tekst) — farver skiftes i :root i <style>
+     ============================================================ */
+  const CAFE = {
+    navn: 'Caféen',                          // ← cafékædens navn
+    slogan: 'Spil mens maden bliver lavet.', // ← lille undertekst på startskærmen
+  };
+
+  /* ---------- Indhold ---------- */
+  const MADVARER = [
+    { emoji:'🥩', navn:'bøf' },
+    { emoji:'🧀', navn:'ost' },
+    { emoji:'🥬', navn:'salat' },
+    { emoji:'🍅', navn:'tomat' },
+    { emoji:'🥒', navn:'agurk' },
+    { emoji:'🥓', navn:'bacon' },
+    { emoji:'🧅', navn:'løg' },
+    { emoji:'🍳', navn:'æg' },
+    { emoji:'🥑', navn:'avocado' },
+    { emoji:'🍄', navn:'svamp' },
+  ];
+  const SKRALD = ['🧦','🐛','🪥','🪨','🧽'];
+  const OPSKRIFTNAVNE = [
+    'Klassikeren','Ostemonsteret','Den Grønne','Bacon-tårnet',
+    'Børnenes Bedste','Sultne Sofie','Dobbeltdækkeren','Køkkenchefens'
+  ];
+  const ROS = ['Værsgo! 🎉','Perfekt! 🍔','Sådan! ⭐','Nam nam! 😋','Bestilling klar! 🔔'];
+
+  /* ---------- DOM ---------- */
+  const lærred      = document.getElementById('laerred');
+  const ctx         = lærred.getContext('2d');
+  const flade       = document.querySelector('.flade');
+  const elPoint     = document.getElementById('point');
+  const elLiv       = document.getElementById('liv');
+  const elOpskriftNavn  = document.getElementById('opskriftNavn');
+  const elOpskriftListe = document.getElementById('opskriftListe');
+  const elRaab      = document.getElementById('raab');
+  const startSkærm  = document.getElementById('startSkaerm');
+  const pauseSkærm  = document.getElementById('pauseSkaerm');
+  const slutSkærm   = document.getElementById('slutSkaerm');
+  const lydKnap     = document.getElementById('lydKnap');
+  const pauseKnap   = document.getElementById('pauseKnap');
+
+  document.getElementById('cafeNavn').textContent = CAFE.navn;
+  document.getElementById('cafeSlogan').textContent = CAFE.slogan;
+  document.title = 'Byg Burgeren – ' + CAFE.navn;
+
+  /* ---------- Rekord ---------- */
+  const REKORD_NØGLE = 'bygburgeren-rekord';
+  function hentRekord(){
+    try { return parseInt(localStorage.getItem(REKORD_NØGLE) || '0', 10) || 0; }
+    catch(e){ return 0; }
+  }
+  function gemRekord(v){
+    try { localStorage.setItem(REKORD_NØGLE, String(v)); } catch(e){}
+  }
+
+  /* ---------- Lyd (uden lydfiler) ---------- */
+  let lydTændt = false;
+  let lydCtx = null;
+  function blip(frekvens, længde = 0.12, type = 'sine', volumen = 0.16){
+    if (!lydTændt) return;
+    try {
+      if (!lydCtx) lydCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (lydCtx.state === 'suspended') lydCtx.resume();
+      const o = lydCtx.createOscillator();
+      const g = lydCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(frekvens, lydCtx.currentTime);
+      g.gain.setValueAtTime(volumen, lydCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, lydCtx.currentTime + længde);
+      o.connect(g); g.connect(lydCtx.destination);
+      o.start(); o.stop(lydCtx.currentTime + længde);
+    } catch(e){}
+  }
+  const lydRigtig  = () => { blip(680, .1, 'triangle'); setTimeout(() => blip(920, .12, 'triangle'), 70); };
+  const lydForkert = () => blip(180, .2, 'square', .12);
+  const lydFærdig  = () => { [520,660,780,1040].forEach((f,i) => setTimeout(() => blip(f,.14,'triangle'), i*90)); };
+
+  lydKnap.addEventListener('click', () => {
+    lydTændt = !lydTændt;
+    lydKnap.textContent = lydTændt ? '🔈' : '🔇';
+    if (lydTændt) blip(760, .1, 'triangle');
+  });
+
+  /* ---------- Canvas-størrelse ---------- */
+  let B = 0, H = 0, dpr = 1;
+  function tilpasStørrelse(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    B = flade.clientWidth;
+    H = flade.clientHeight;
+    lærred.width  = Math.round(B * dpr);
+    lærred.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (typeof spriteCache !== 'undefined') spriteCache.clear();
+    bgLærred = null;
+  }
+  window.addEventListener('resize', tilpasStørrelse);
+  window.addEventListener('orientationchange', () => setTimeout(tilpasStørrelse, 150));
+
+  const radius   = () => Math.max(16, Math.min(B, H) * 0.058);
+  const gribeY   = () => H * 0.845;
+  const bakkeBr  = () => Math.max(86, Math.min(B * 0.32, 200));
+
+  /* ---------- Spiltilstand ---------- */
+  const spil = {
+    kører:false, pause:false, slut:false,
+    point:0, liv:3, niveau:1, burgere:0, stime:0,
+    opskrift:[], opskriftNavn:'', bygget:0,
+    ting:[], effekter:[], konfetti:[],
+    bakkeX:0.5, bakkeMål:0.5,
+    tilSpawn:0, sidenNødvendig:0, ryst:0, tid:0,
+    fløj:null,
+  };
+
+  window.__spil = spil; // gør tilstanden tilgængelig for automatiske tests
+
+  function tilfældig(liste){ return liste[Math.floor(Math.random() * liste.length)]; }
+
+  /* ---------- Opskrifter ---------- */
+  function nyOpskrift(){
+    const antal = Math.min(2 + Math.floor((spil.niveau - 1) / 2), 5);
+    const udvalg = MADVARER.slice(0, Math.min(3 + spil.niveau, MADVARER.length));
+    spil.opskrift = Array.from({ length: antal }, () => tilfældig(udvalg));
+    spil.opskriftNavn = tilfældig(OPSKRIFTNAVNE);
+    spil.bygget = 0;
+    tegnOpskriftHUD();
+  }
+
+  function tegnOpskriftHUD(){
+    elOpskriftNavn.textContent = spil.opskriftNavn || '';
+    elOpskriftListe.innerHTML = '';
+    spil.opskrift.forEach((ing, i) => {
+      const s = document.createElement('span');
+      s.className = 'ingrediens' + (i < spil.bygget ? ' klar' : (i === spil.bygget ? ' naeste' : ''));
+      s.textContent = ing.emoji;
+      elOpskriftListe.appendChild(s);
+    });
+  }
+
+  function opdaterHUD(){
+    elPoint.textContent = spil.point;
+    elLiv.textContent = '❤️'.repeat(Math.max(0, spil.liv)) + '🖤'.repeat(Math.max(0, 3 - spil.liv));
+  }
+
+  function råb(tekst){
+    elRaab.textContent = tekst;
+    elRaab.classList.remove('vis');
+    void elRaab.offsetWidth;
+    elRaab.classList.add('vis');
+  }
+
+  /* ---------- Genstande ---------- */
+  function spawn(tvungenNødvendig = false){
+    const nødvendig = spil.opskrift[spil.bygget];
+    const skraldChance = Math.min(0.12 + spil.niveau * 0.02, 0.26);
+    let emoji, erSkrald = false, erMad = true;
+
+    if (tvungenNødvendig || Math.random() < 0.42) {
+      emoji = nødvendig.emoji;
+    } else if (Math.random() < skraldChance) {
+      emoji = tilfældig(SKRALD); erSkrald = true; erMad = false;
+    } else {
+      emoji = tilfældig(MADVARER).emoji;
+    }
+
+    if (emoji === nødvendig.emoji) spil.sidenNødvendig = 0;
+
+    spil.ting.push({
+      x: 0.12 + Math.random() * 0.76,
+      y: -0.10,
+      forrigeY: -0.12,
+      fart: (0.30 + spil.niveau * 0.028 + Math.random() * 0.10),
+      drej: (Math.random() - 0.5) * 1.6,
+      vinkel: 0,
+      emoji, erSkrald, erMad,
+    });
+  }
+
+  function effekt(x, y, tekst, farve){
+    spil.effekter.push({ x, y, tekst, farve, liv: 1 });
+  }
+
+  function konfettiRegn(x, y){
+    const farver = ['#f5a623','#e5533d','#4caf6d','#2f9bd6','#b83a27'];
+    for (let i = 0; i < 26; i++){
+      spil.konfetti.push({
+        x, y,
+        vx: (Math.random() - 0.5) * 0.9,
+        vy: -0.5 - Math.random() * 0.7,
+        farve: tilfældig(farver),
+        størrelse: 3 + Math.random() * 5,
+        liv: 1,
+      });
+    }
+  }
+
+  /* ---------- Fangst ---------- */
+  function grib(ting){
+    const nødvendig = spil.opskrift[spil.bygget];
+
+    if (ting.erSkrald){
+      spil.liv--;
+      spil.stime = 0;
+      spil.ryst = 1;
+      lydForkert();
+      effekt(ting.x, 0.80, 'Ad! ' + ting.emoji, '#e5533d');
+      opdaterHUD();
+      if (spil.liv <= 0) slutSpil();
+      return;
+    }
+
+    if (ting.emoji === nødvendig.emoji){
+      spil.bygget++;
+      spil.stime++;
+      const bonus = Math.min(spil.stime, 8) * 2;
+      spil.point += 10 + bonus;
+      lydRigtig();
+      effekt(ting.x, 0.78, '+' + (10 + bonus), '#4caf6d');
+      opdaterHUD();
+      tegnOpskriftHUD();
+
+      if (spil.bygget >= spil.opskrift.length) burgerFærdig();
+      return;
+    }
+
+    // Forkert mad: ingen straf, kun et lille "nej".
+    spil.stime = 0;
+    blip(300, .09, 'sine', .1);
+    effekt(ting.x, 0.78, 'Nej…', '#6b4a33');
+  }
+
+  function burgerFærdig(){
+    spil.burgere++;
+    spil.point += 50;
+    lydFærdig();
+    råb(tilfældig(ROS));
+    konfettiRegn(spil.bakkeX, 0.80);
+    spil.fløj = { x: spil.bakkeX, y: 0.80, liv: 1, ingredienser: spil.opskrift.slice() };
+    if (spil.burgere % 3 === 0) spil.niveau++;
+    opdaterHUD();
+    nyOpskrift();
+  }
+
+  /* ---------- Emoji-sprites (tegnes én gang og genbruges) ---------- */
+  const EMOJI_SKRIFT = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", system-ui, sans-serif';
+  const spriteCache = new Map();
+
+  function sprite(emoji, cssStørrelse){
+    const px = Math.max(24, Math.round(cssStørrelse * dpr));
+    const nøgle = emoji + '@' + px;
+    let c = spriteCache.get(nøgle);
+    if (c) return c;
+    c = document.createElement('canvas');
+    c.width = c.height = px;
+    const g = c.getContext('2d');
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.font = Math.round(px * 0.80) + 'px ' + EMOJI_SKRIFT;
+    g.fillText(emoji, px / 2, px * 0.53);
+    spriteCache.set(nøgle, c);
+    return c;
+  }
+
+  function tegnEmoji(emoji, x, y, cssStørrelse){
+    const s = sprite(emoji, cssStørrelse);
+    ctx.drawImage(s, x - cssStørrelse / 2, y - cssStørrelse / 2, cssStørrelse, cssStørrelse);
+  }
+
+  /* ---------- Tegning ---------- */
+  function rundRekt(x, y, b, h, r){
+    const rr = Math.min(r, b / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + b, y, x + b, y + h, rr);
+    ctx.arcTo(x + b, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + b, y, rr);
+    ctx.closePath();
+  }
+
+  let bgLærred = null;
+
+  function byggBaggrund(){
+    bgLærred = document.createElement('canvas');
+    bgLærred.width  = Math.max(1, Math.round(B * dpr));
+    bgLærred.height = Math.max(1, Math.round(H * dpr));
+    const g = bgLærred.getContext('2d');
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Væggen i caféen
+    const væg = g.createLinearGradient(0, 0, 0, H);
+    væg.addColorStop(0,   '#ffeccd');
+    væg.addColorStop(0.55,'#ffdcae');
+    væg.addColorStop(1,   '#f8c68d');
+    g.fillStyle = væg;
+    g.fillRect(0, 0, B, H);
+
+    // Lyse striber på væggen
+    g.save();
+    g.globalAlpha = 0.45;
+    g.fillStyle = '#fff5e2';
+    const stribe = Math.max(26, B / 9);
+    for (let x = -stribe; x < B + stribe; x += stribe * 2) g.fillRect(x, 0, stribe, H);
+    g.restore();
+
+    // Hængelamper med varmt lys
+    const lamper = 3;
+    for (let i = 0; i < lamper; i++){
+      const x = B * (0.5 / lamper + i / lamper);
+      const snorH = H * 0.045;
+
+      const lys = g.createRadialGradient(x, snorH + 14, 6, x, snorH + H * 0.34, H * 0.36);
+      lys.addColorStop(0, 'rgba(255, 232, 168, .85)');
+      lys.addColorStop(1, 'rgba(255, 232, 168, 0)');
+      g.fillStyle = lys;
+      g.beginPath();
+      g.moveTo(x - 16, snorH + 10);
+      g.lineTo(x + 16, snorH + 10);
+      g.lineTo(x + B * 0.20, H * 0.62);
+      g.lineTo(x - B * 0.20, H * 0.62);
+      g.closePath();
+      g.fill();
+
+      g.strokeStyle = 'rgba(90, 55, 30, .55)';
+      g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(x, 0);
+      g.lineTo(x, snorH);
+      g.stroke();
+
+      g.fillStyle = '#e5533d';
+      g.beginPath();
+      g.moveTo(x - 22, snorH + 12);
+      g.lineTo(x + 22, snorH + 12);
+      g.lineTo(x + 11, snorH);
+      g.lineTo(x - 11, snorH);
+      g.closePath();
+      g.fill();
+
+      g.fillStyle = '#ffe9a8';
+      g.beginPath();
+      g.ellipse(x, snorH + 13, 15, 5, 0, 0, Math.PI * 2);
+      g.fill();
+    }
+
+    // Disken forneden
+    const dY = H * 0.905;
+    g.fillStyle = '#8a5230';
+    g.fillRect(0, dY, B, H - dY);
+    g.fillStyle = '#a8683d';
+    g.fillRect(0, dY, B, 7);
+    g.fillStyle = 'rgba(255, 244, 228, .30)';
+    g.fillRect(0, dY, B, 2);
+
+    // Blød skygge over disken
+    const sk = g.createLinearGradient(0, dY - 26, 0, dY);
+    sk.addColorStop(0, 'rgba(120, 70, 35, 0)');
+    sk.addColorStop(1, 'rgba(120, 70, 35, .18)');
+    g.fillStyle = sk;
+    g.fillRect(0, dY - 26, B, 26);
+  }
+
+  function tegnBaggrund(){
+    if (!bgLærred) byggBaggrund();
+    ctx.drawImage(bgLærred, 0, 0, B, H);
+  }
+
+  function tegnBakke(){
+    const r = radius();
+    const bx = spil.bakkeX * B;
+    const by = gribeY();
+    const bb = bakkeBr();
+
+    ctx.save();
+
+    // Skygge på disken
+    ctx.fillStyle = 'rgba(120, 70, 35, .22)';
+    ctx.beginPath();
+    ctx.ellipse(bx, by + r * 1.05, bb * 0.52, r * 0.20, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bakken
+    ctx.fillStyle = '#5a3520';
+    rundRekt(bx - bb / 2, by + r * 0.44, bb, r * 0.34, r * 0.17);
+    ctx.fill();
+    ctx.fillStyle = '#7a4a2c';
+    rundRekt(bx - bb / 2, by + r * 0.40, bb, r * 0.26, r * 0.13);
+    ctx.fill();
+
+    // Nederste bolle
+    ctx.fillStyle = '#c98b48';
+    rundRekt(bx - bb * 0.44, by + r * 0.02, bb * 0.88, r * 0.50, r * 0.24);
+    ctx.fill();
+    ctx.fillStyle = '#eaad63';
+    rundRekt(bx - bb * 0.44, by - r * 0.02, bb * 0.88, r * 0.46, r * 0.23);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255, 240, 214, .55)';
+    rundRekt(bx - bb * 0.36, by - r * 0.02, bb * 0.72, r * 0.14, r * 0.07);
+    ctx.fill();
+
+    // Stak af fangede ingredienser
+    for (let i = 0; i < spil.bygget; i++){
+      const iy = by - r * 0.26 - i * r * 0.46;
+      tegnEmoji(spil.opskrift[i].emoji, bx, iy, r * 1.7);
+    }
+    ctx.restore();
+  }
+
+  function tegnTing(){
+    const r = radius();
+    const str = r * 1.9;
+    spil.ting.forEach(t => {
+      ctx.save();
+      ctx.translate(t.x * B, t.y * H);
+      ctx.rotate(t.vinkel);
+      if (t.erSkrald){
+        // rød ring bag skrald, så det er tydeligt for de mindste
+        ctx.beginPath();
+        ctx.arc(0, 0, str * 0.52, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(229,83,61,.28)';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(229,83,61,.85)';
+        ctx.stroke();
+      }
+      tegnEmoji(t.emoji, 0, 0, str);
+      ctx.restore();
+    });
+  }
+
+  function tegnEffekter(){
+    ctx.save();
+    ctx.font = '800 ' + Math.max(16, B * 0.05) + 'px "Baloo 2", system-ui, sans-serif';
+    spil.effekter.forEach(e => {
+      ctx.globalAlpha = Math.max(0, e.liv);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'rgba(255,255,255,.85)';
+      ctx.fillStyle = e.farve;
+      const ex = e.x * B, ey = (e.y - (1 - e.liv) * 0.12) * H;
+      ctx.strokeText(e.tekst, ex, ey);
+      ctx.fillText(e.tekst, ex, ey);
+    });
+    ctx.restore();
+
+    ctx.save();
+    spil.konfetti.forEach(k => {
+      ctx.globalAlpha = Math.max(0, k.liv);
+      ctx.fillStyle = k.farve;
+      ctx.fillRect(k.x * B, k.y * H, k.størrelse, k.størrelse * 1.6);
+    });
+    ctx.restore();
+
+    // Færdig burger der "flyver til gæsten"
+    if (spil.fløj){
+      const f = spil.fløj;
+      const r = radius();
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, f.liv);
+      const x = f.x * B + (1 - f.liv) * B * 0.30;
+      const y = (f.y - (1 - f.liv) * 0.55) * H;
+      tegnEmoji('🍔', x, y, r * 2.1);
+      ctx.restore();
+    }
+  }
+
+  /* ---------- Opdatering ---------- */
+  function opdater(dt){
+    spil.tid += dt;
+    spil.sidenNødvendig += dt;
+
+    // Bakken glider blødt mod målet
+    spil.bakkeX += (spil.bakkeMål - spil.bakkeX) * Math.min(1, dt * 14);
+
+    // Spawn
+    spil.tilSpawn -= dt;
+    if (spil.tilSpawn <= 0){
+      spawn();
+      spil.tilSpawn = Math.max(0.42, 1.15 - spil.niveau * 0.06);
+    }
+    if (spil.sidenNødvendig > 2.6){
+      spawn(true);
+      spil.sidenNødvendig = 0;
+    }
+
+    // Genstande falder
+    const r = radius();
+    const gY = gribeY();
+    const halvBakke = bakkeBr() / 2;
+
+    for (let i = spil.ting.length - 1; i >= 0; i--){
+      const t = spil.ting[i];
+      t.forrigeY = t.y;
+      t.y += t.fart * dt;
+      t.vinkel += t.drej * dt;
+
+      const yPx = t.y * H;
+      const forrigePx = t.forrigeY * H;
+
+      if (forrigePx < gY && yPx >= gY){
+        const dx = Math.abs(t.x * B - spil.bakkeX * B);
+        if (dx < halvBakke + r * 0.5){
+          grib(t);
+          spil.ting.splice(i, 1);
+          continue;
+        }
+      }
+      if (t.y > 1.12) spil.ting.splice(i, 1);
+    }
+
+    // Effekter
+    for (let i = spil.effekter.length - 1; i >= 0; i--){
+      spil.effekter[i].liv -= dt * 1.3;
+      if (spil.effekter[i].liv <= 0) spil.effekter.splice(i, 1);
+    }
+    for (let i = spil.konfetti.length - 1; i >= 0; i--){
+      const k = spil.konfetti[i];
+      k.x += k.vx * dt;
+      k.vy += dt * 1.9;
+      k.y += k.vy * dt;
+      k.liv -= dt * 0.75;
+      if (k.liv <= 0) spil.konfetti.splice(i, 1);
+    }
+    if (spil.fløj){
+      spil.fløj.liv -= dt * 1.1;
+      if (spil.fløj.liv <= 0) spil.fløj = null;
+    }
+    if (spil.ryst > 0) spil.ryst = Math.max(0, spil.ryst - dt * 3.2);
+  }
+
+  function tegn(){
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (spil.ryst > 0){
+      const s = spil.ryst * 9;
+      ctx.translate((Math.random() - 0.5) * s, (Math.random() - 0.5) * s);
+    }
+    tegnBaggrund();
+    tegnTing();
+    tegnBakke();
+    tegnEffekter();
+  }
+
+  let sidsteTid = 0;
+  function løkke(nu){
+    requestAnimationFrame(løkke);
+    const dt = Math.min((nu - sidsteTid) / 1000 || 0, 0.05);
+    sidsteTid = nu;
+    if (spil.kører && !spil.pause && !spil.slut) opdater(dt);
+    tegn();
+  }
+
+  /* ---------- Styring ---------- */
+  function begræns(x){
+    const kant = (bakkeBr() / 2) / Math.max(1, B);
+    return Math.min(1 - kant, Math.max(kant, x));
+  }
+
+  function flytTil(klientX){
+    const kasse = lærred.getBoundingClientRect();
+    spil.bakkeMål = begræns((klientX - kasse.left) / kasse.width);
+  }
+
+  lærred.addEventListener('pointerdown', e => { lærred.setPointerCapture(e.pointerId); flytTil(e.clientX); });
+  lærred.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') flytTil(e.clientX); });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  spil.bakkeMål = begræns(spil.bakkeMål - 0.08);
+    if (e.key === 'ArrowRight') spil.bakkeMål = begræns(spil.bakkeMål + 0.08);
+    if (e.key === ' ' && spil.kører) { e.preventDefault(); sætPause(!spil.pause); }
+  });
+
+  /* ---------- Skærme ---------- */
+  function visSkærm(el, vis){ el.classList.toggle('skjult', !vis); }
+
+  function sætPause(pause){
+    if (!spil.kører || spil.slut) return;
+    spil.pause = pause;
+    visSkærm(pauseSkærm, pause);
+  }
+
+  function startSpil(){
+    spil.kører = true; spil.pause = false; spil.slut = false;
+    spil.point = 0; spil.liv = 3; spil.niveau = 1; spil.burgere = 0; spil.stime = 0;
+    spil.ting = []; spil.effekter = []; spil.konfetti = []; spil.fløj = null;
+    spil.bakkeX = spil.bakkeMål = 0.5;
+    spil.tilSpawn = 0.5; spil.sidenNødvendig = 0; spil.ryst = 0;
+    nyOpskrift();
+    opdaterHUD();
+    visSkærm(startSkærm, false);
+    visSkærm(pauseSkærm, false);
+    visSkærm(slutSkærm, false);
+    råb('Kom så! 🍳');
+  }
+
+  function slutSpil(){
+    spil.slut = true;
+    spil.kører = false;
+    const rekord = Math.max(hentRekord(), spil.point);
+    gemRekord(rekord);
+
+    document.getElementById('slutPoint').textContent = spil.point;
+    document.getElementById('slutBurgere').textContent = spil.burgere;
+    document.getElementById('slutRekord').textContent = rekord;
+    document.getElementById('slutTitel').textContent =
+      spil.burgere === 0 ? 'Ups!' : (spil.point >= rekord ? 'Ny rekord! 🏆' : 'Godt gået!');
+    document.getElementById('slutTekst').textContent =
+      spil.burgere === 0 ? 'Prøv igen — du skal bare fange dem i rækkefølge.'
+                         : 'Du lavede ' + spil.burgere + (spil.burgere === 1 ? ' burger' : ' burgere') + ' til køkkenet.';
+    visSkærm(slutSkærm, true);
+  }
+
+  function visRekordPåStart(){
+    const r = hentRekord();
+    document.getElementById('rekordTekst').textContent = r > 0 ? 'Din rekord: ' + r + ' point' : '';
+  }
+
+  document.getElementById('startKnap').addEventListener('click', startSpil);
+  document.getElementById('igenKnap').addEventListener('click', startSpil);
+  document.getElementById('fortsaetKnap').addEventListener('click', () => sætPause(false));
+  document.getElementById('afslutKnap').addEventListener('click', () => {
+    spil.kører = false; spil.pause = false; spil.slut = false;
+    spil.ting = []; spil.effekter = []; spil.konfetti = [];
+    visSkærm(pauseSkærm, false);
+    visRekordPåStart();
+    visSkærm(startSkærm, true);
+  });
+  pauseKnap.addEventListener('click', () => sætPause(!spil.pause));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) sætPause(true); });
+
+  /* ---------- Start ---------- */
+  tilpasStørrelse();
+  visRekordPåStart();
+  opdaterHUD();
+  requestAnimationFrame(løkke);
+})();
+</script>
+</body>
+</html>
