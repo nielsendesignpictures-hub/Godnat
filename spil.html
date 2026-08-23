@@ -615,12 +615,15 @@
   ];
 
   /* ---------- Gaver ---------- */
-  /* Point-grænserne er sat højt med vilje: de kan nås af en dygtig spiller,
-     men ikke i hver eneste omgang. Skru "point" op, hvis der gives for mange gaver. */
+  /* Grænserne er målt med en bot, der spiller næsten fejlfrit:
+       - en god omgang gav 1300–1800 point
+       - en fremragende omgang med held gav 2500–3600 point
+       - over 4000 point kræver 6+ minutters næsten fejlfrit spil
+     Skru "point" OP, hvis der gives for mange gaver — og NED, hvis ingen vinder. */
   const GAVER = [
-    { point: 1800, ikon:'🎫', titel:'10% på 1 valgfri ret',    detalje:'Ved næste besøg' },
-    { point: 3200, ikon:'🥤', titel:'1 gratis lille drikkevare', detalje:'Valgfri, ved næste besøg' },
-    { point: 5000, ikon:'🏆', titel:'10% på hele regningen',    detalje:'Ved næste besøg' },
+    { point: 1500, ikon:'🎫', titel:'10% på 1 valgfri ret',      detalje:'Ved næste besøg' },
+    { point: 2800, ikon:'🥤', titel:'1 gratis lille drikkevare', detalje:'Valgfri, ved næste besøg' },
+    { point: 4500, ikon:'🏆', titel:'10% på hele regningen',     detalje:'Ved næste besøg' },
   ];
 
   /* ---------- Indhold ---------- */
