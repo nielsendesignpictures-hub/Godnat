@@ -345,8 +345,8 @@
   }
 
   .gavekort{
-    margin:0 0 18px;
-    padding:18px 16px;
+    margin:0 0 14px;
+    padding:15px 14px;
     border-radius:18px;
     background:
       radial-gradient(120% 100% at 50% 0%, rgba(217,180,91,.28), transparent 70%),
@@ -354,7 +354,7 @@
     border:1px solid rgba(217,180,91,.6);
     box-shadow:0 0 30px rgba(217,180,91,.18) inset;
   }
-  .gavekort__ikon{ font-size:2.4rem; line-height:1; }
+  .gavekort__ikon{ font-size:2rem; line-height:1; }
   .gavekort h3{
     margin:8px 0 4px;
     font-family:var(--display);
@@ -449,7 +449,7 @@
   .resultat{
     display:flex;
     gap:10px;
-    margin:16px 0 18px;
+    margin:14px 0 16px;
   }
   .resultat div{
     flex:1;
@@ -2476,6 +2476,18 @@
       return;
     }
 
+    // Foldet sammen, så gaven og knapperne bliver det, man ser først
+    const åbn = document.createElement('button');
+    åbn.type = 'button';
+    åbn.className = 'knap knap--rolig';
+    åbn.style.marginBottom = '18px';
+    åbn.textContent = '💌 Få gaven på mail';
+    åbn.addEventListener('click', () => visFormular(boks, kode));
+    boks.appendChild(åbn);
+  }
+
+  function visFormular(boks, kode){
+    boks.innerHTML = '';
     const felt = document.createElement('div');
     felt.className = 'nyhedsbrev';
     felt.innerHTML =
@@ -2490,11 +2502,11 @@
         '<p class="fejl" id="nyhedsbrevFejl" hidden></p>' +
       '</form>';
     boks.appendChild(felt);
+    felt.querySelector('#nyhedsbrevMail').focus();
 
-    const form = felt.querySelector('#nyhedsbrevForm');
-    const fejl = felt.querySelector('#nyhedsbrevFejl');
-    form.addEventListener('submit', e => {
+    felt.querySelector('#nyhedsbrevForm').addEventListener('submit', e => {
       e.preventDefault();
+      const fejl = felt.querySelector('#nyhedsbrevFejl');
       const mail = felt.querySelector('#nyhedsbrevMail').value.trim();
       const ok = felt.querySelector('#nyhedsbrevOk').checked;
       const visFejl = t => { fejl.textContent = t; fejl.hidden = false; };
