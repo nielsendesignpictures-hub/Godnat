@@ -877,18 +877,18 @@
   const BANER = [
     { navn:'Frokostvagt', ikon:'🍔', harMad:true,  harDrikke:false, ankomst:7.5, tål:30, borde:3, madtid:5.5, hældetid:1.6,
       hjælper:null,
-      spillerMå:['bord','luge'],
+      spillerMå:['bord','luge'], bakke:2,
       tekst:'Frokost. Du er alene på gulvet: tag imod, tag bestillingen, hent maden og servér.' },
 
     { navn:'Bar-vagt',    ikon:'🥤', harMad:false, harDrikke:true,  ankomst:5.6, tål:26, borde:4, madtid:6.0, hældetid:1.7,
       hjælper:{ sætter:true, tager:true, leverer:true, kasserer:true },
-      spillerMå:['station'],
+      spillerMå:['station'], bakke:2,
       tekst:'Du står bag baren og laver drikkevarerne. Kollegaen tager imod gæsterne og henter dem på hylden.' },
 
-    { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:5.8, tål:23, borde:4, madtid:6.5, hældetid:1.8,
+    { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:6.4, tål:25, borde:4, madtid:6.5, hældetid:1.8,
       hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true },
-      spillerMå:['bord','luge','station'],
-      tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer.' },
+      spillerMå:['bord','luge','station'], bakke:3,
+      tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer. Til gengæld får du den store bakke.' },
   ];
 
   const DRIKKE = [
@@ -1822,7 +1822,7 @@
       ['🍔', '<b>Frokost:</b> du gør det hele — tager imod, tager bestillinger, henter mad og serverer.'],
       ['🥤', '<b>Bar:</b> du bliver bag baren og laver drikkevarer. En kollega løber gulvet.'],
       ['🌙', '<b>Aften:</b> kollegaen tager imod, du laver drikkevarer, henter mad og serverer.'],
-      ['❤️', 'Bakken bærer to. Fem glade gæster i træk giver et liv tilbage.'],
+      ['❤️', 'Bakken bærer to — tre om aftenen. Fem glade gæster i træk giver et liv tilbage.'],
     ],
 
     get baggrund(){ return 'gulv' + kerne.niveau; },
@@ -1835,6 +1835,7 @@
     antalBorde(){ return this.bane().borde; },
     måTrykke(hvad){ return this.bane().spillerMå.includes(hvad); },
     hjælperLeverer(){ const h = this.bane().hjælper; return !!(h && h.leverer); },
+    bakkeMax(){ return this.bane().bakke; },
 
     start(){
       this.tjener = { x:0.5, y:0.78, målX:0.5, målY:0.78, opgave:null, travl:0, følger:null, hælder:null };
@@ -2016,7 +2017,7 @@
         const venter = this.ventendePåDrik(drik);
         if (venter) giv(10, HYLDEPLADS.x, HYLDEPLADS.y - 0.04, '+10 ' + DRIKKE[drik].emoji);
         else effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Ingen har bestilt den', '#bfae95');
-      } else if (this.bakke.length < 2){
+      } else if (this.bakke.length < this.bakkeMax()){
         this.bakke.push({ slags:'drikke', drik });
         blip(880, .1, 'triangle');
       }
@@ -2227,15 +2228,15 @@
 
       if (o.type === 'luge'){
         let taget = 0;
-        while (this.bakke.length < 2 && this.klar.length > 0){
+        while (this.bakke.length < this.bakkeMax() && this.klar.length > 0){
           this.bakke.push(this.klar.shift());
           taget++;
         }
         if (taget > 0){
           this.turBonus = 0;
           blip(560, .1, 'triangle');
-          effekt(LUGE.x, LUGE.y + 0.06, taget === 2 ? 'To tallerkener!' : 'På bakken', '#f2dda0');
-        } else if (this.bakke.length >= 2){
+          effekt(LUGE.x, LUGE.y + 0.06, taget > 1 ? taget + ' tallerkener!' : 'På bakken', '#f2dda0');
+        } else if (this.bakke.length >= this.bakkeMax()){
           effekt(LUGE.x, LUGE.y + 0.06, 'Bakken er fuld', '#bfae95');
         }
         this.hud();
@@ -2243,7 +2244,7 @@
       }
 
       if (o.type === 'station'){
-        const plads = this.hjælperLeverer() ? this.hylde.length < 3 : this.bakke.length < 2;
+        const plads = this.hjælperLeverer() ? this.hylde.length < 3 : this.bakke.length < this.bakkeMax();
         if (!plads){
           effekt(STATIONER[o.drik].x, STATIONER[o.drik].y + 0.06,
                  this.hjælperLeverer() ? 'Hylden er fuld' : 'Bakken er fuld', '#bfae95');
@@ -2262,7 +2263,7 @@
           const d = this.hylde.pop();
           blip(220, .14, 'sine', .1);
           effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Hældt ud ' + DRIKKE[d.drik].emoji, '#bfae95');
-        } else if (this.bakke.length < 2){
+        } else if (this.bakke.length < this.bakkeMax()){
           // Ellers tager man den med sig
           const d = this.hylde.pop();
           this.bakke.push({ slags:'drikke', drik:d.drik });
@@ -2293,8 +2294,8 @@
           this.bakke.splice(i, 1);
           this.turBonus++;
           this.servér(gæst, p);
-          if (this.turBonus === 2){
-            giv(20, p.x, p.y - 0.12, 'Dobbelt-tur! +20');
+          if (this.turBonus === this.bakkeMax()){
+            giv(20, p.x, p.y - 0.12, 'Hele bakken! +20');
             lydFærdig();
           }
           return;
