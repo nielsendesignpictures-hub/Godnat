@@ -1863,6 +1863,13 @@
         effekt(0.5, 0.5, 'Aftentillæg +' + Math.round((b.tillæg - 1) * 100) + '%', '#f2dda0', 0.5);
       }
       this.sætHjælper();
+
+      // Vagtskifte: rummet får en frisk start. Uden det bliver overleveringen
+      // en klippe — gæsterne står midt i noget, kollegaens rolle skifter, og
+      // tempoet stiger i samme sekund.
+      this.gæster.forEach(g => { g.tål = Math.max(g.tål, 0.75); });
+      this.tilAnkomst = Math.max(this.tilAnkomst, 5);
+
       // Igangværende bestillinger bliver færdige — men gæster, der endnu ikke
       // har bestilt, ønsker det, den nye vagt kan levere.
       this.gæster.forEach(g => {
