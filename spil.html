@@ -1829,7 +1829,7 @@
 
     tjener:null, hjælper:null,
     gæster:[], boner:[], klar:[], bakke:[], hylde:[],
-    tilAnkomst:0, næsteId:1, betjente:0, turBonus:0, glade:0,
+    tilAnkomst:0, næsteId:1, betjente:0, turBonus:0, glade:0, vagtTid:0, rushSagt:false,
 
     bane(){ return BANER[kerne.niveau]; },
     antalBorde(){ return this.bane().borde; },
@@ -1842,6 +1842,7 @@
       this.tjener = { x:0.5, y:0.78, målX:0.5, målY:0.78, opgave:null, travl:0, følger:null, hælder:null };
       this.gæster = []; this.boner = []; this.klar = []; this.bakke = []; this.hylde = [];
       this.tilAnkomst = 1.2; this.næsteId = 1; this.betjente = 0; this.turBonus = 0; this.glade = 0;
+      this.vagtTid = 0; this.rushSagt = false;
       this.sætHjælper();
       this.hud();
     },
@@ -1869,6 +1870,8 @@
       // tempoet stiger i samme sekund.
       this.gæster.forEach(g => { g.tål = Math.max(g.tål, 0.75); });
       this.tilAnkomst = Math.max(this.tilAnkomst, 5);
+      this.vagtTid = 0;
+      this.rushSagt = false;
 
       // Igangværende bestillinger bliver færdige — men gæster, der endnu ikke
       // har bestilt, ønsker det, den nye vagt kan levere.
@@ -1946,6 +1949,15 @@
     opdater(dt){
       const b = this.bane();
 
+      // Vagten bygger op: jo længere man er inde i den, jo tættere kommer gæsterne.
+      // Uden det kan en rutineret spiller blive stående i det uendelige.
+      this.vagtTid += dt;
+      const pres = Math.max(0.6, 1 - this.vagtTid / 300);
+      if (!this.rushSagt && this.vagtTid > 150){
+        this.rushSagt = true;
+        råb('Der er run på! 🔥');
+      }
+
       this.tilAnkomst -= dt;
       if (this.tilAnkomst <= 0){
         if (this.gæster.filter(g => g.tilstand === 'dør').length < 3){
@@ -1957,7 +1969,7 @@
           });
           lydKlokke();
         }
-        this.tilAnkomst = b.ankomst * (0.8 + Math.random() * 0.4);
+        this.tilAnkomst = b.ankomst * pres * (0.8 + Math.random() * 0.4);
       }
 
       const fart = { 'dør':1.15, 'bestille':1.0, 'venter':0.5, 'spiser':0, 'betale':0.75 };
