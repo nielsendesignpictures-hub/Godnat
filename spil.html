@@ -885,7 +885,7 @@
       spillerMå:['station'],
       tekst:'Du står bag baren og laver drikkevarerne. Kollegaen tager imod gæsterne og henter dem på hylden.' },
 
-    { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:5.2, tål:21, borde:4, madtid:6.5, hældetid:1.8,
+    { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:5.8, tål:23, borde:4, madtid:6.5, hældetid:1.8,
       hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true },
       spillerMå:['bord','luge','station'],
       tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer.' },
@@ -1864,11 +1864,13 @@
         if (g.tilstand === 'dør' || g.tilstand === 'bestille') g.ønske = this.nytØnske();
       });
       if (!b.harDrikke) this.bakke = this.bakke.filter(p => p.slags !== 'drikke');
-      // Bartenderen stiller sig om bag baren
+      // Bartenderen stiller sig om bag baren. travl og hælder skal nulstilles,
+      // ellers når den igangværende handling at slette turen, før den er gået.
       if (!this.måTrykke('bord')){
-        this.tjener.opgave = null; this.tjener.følger = null;
-        this.tjener.målX = 0.5; this.tjener.målY = BARLINJE;
-        this.tjener.opgave = { type:'stil' };
+        this.tjener.følger = null;
+        this.tjener.hælder = null;
+        this.tjener.travl = 0;
+        this.gåTil({ type:'stil' }, { x:0.5, y:BARLINJE });
       }
       this.hud();
     },
@@ -2115,7 +2117,7 @@
         const g = h.bærer && h.bærer.til;
         h.bærer = null;
         if (!g || !this.gæster.includes(g) || g.tilstand !== 'venter') return;
-        this.servér(g, BORDPLADSER[g.bord]);
+        this.servér(g, BORDPLADSER[g.bord], 0.7);
         return;
       }
 
@@ -2129,7 +2131,7 @@
       if (o.type === 'kasser'){
         const g = o.gæst;
         if (!this.gæster.includes(g) || g.tilstand !== 'betale') return;
-        this.tagBetaling(g, BORDPLADSER[g.bord]);
+        this.tagBetaling(g, BORDPLADSER[g.bord], 0.7);
         return;
       }
 
@@ -2166,23 +2168,23 @@
       this.hud();
     },
 
-    servér(g, p){
+    servér(g, p, faktor = 1){
       g.tilstand = 'spiser';
       g.spiseTid = g.ønske.slags === 'mad' ? 4.5 : 3.5;
-      const bonus = Math.round(g.tål * 15);
+      const point = Math.round((20 + g.tål * 15) * faktor);
       lydRigtig();
-      giv(20 + bonus, p.x, p.y - 0.05, '+' + (20 + bonus));
+      giv(point, p.x, p.y - 0.05, '+' + point);
       this.hud();
     },
 
-    tagBetaling(g, p){
-      const drikkepenge = Math.round(g.tål * 10);
+    tagBetaling(g, p, faktor = 1){
+      const point = Math.round((15 + g.tål * 10) * faktor);
       const glad = g.tål > 0.6;
       this.gæster = this.gæster.filter(x => x !== g);
       this.betjente++;
       if (glad) this.glade++; else this.glade = 0;
       lydFærdig();
-      giv(15 + drikkepenge, p.x, p.y - 0.05, '+' + (15 + drikkepenge) + ' 💰');
+      giv(point, p.x, p.y - 0.05, '+' + point + ' 💰');
       if (this.glade >= 5 && kerne.liv < 3){
         this.glade = 0;
         kerne.liv++;
@@ -2257,9 +2259,20 @@
 
       if (o.type === 'hylde'){
         if (!this.hylde.length) return;
-        const d = this.hylde.pop();
-        blip(220, .14, 'sine', .1);
-        effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Hældt ud ' + DRIKKE[d.drik].emoji, '#bfae95');
+        if (this.hjælperLeverer()){
+          // Barvagt: kollegaen henter selv — det her er at hælde en fejl ud
+          const d = this.hylde.pop();
+          blip(220, .14, 'sine', .1);
+          effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Hældt ud ' + DRIKKE[d.drik].emoji, '#bfae95');
+        } else if (this.bakke.length < 2){
+          // Ellers tager man den med sig
+          const d = this.hylde.pop();
+          this.bakke.push({ slags:'drikke', drik:d.drik });
+          blip(880, .1, 'triangle');
+          effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Med på bakken ' + DRIKKE[d.drik].emoji, '#f2dda0');
+        } else {
+          effekt(HYLDEPLADS.x, HYLDEPLADS.y - 0.04, 'Bakken er fuld', '#bfae95');
+        }
         this.hud();
         return;
       }
@@ -2324,7 +2337,10 @@
         // bartenderen går langs baren, ikke ned på gulvet
         STATIONER.forEach(s => prøv({ type:'station', drik:s.drik }, s,
           this.hjælperLeverer() ? { x:s.x, y:BARLINJE } : s));
-        if (this.hylde.length) prøv({ type:'hylde' }, HYLDEPLADS, { x:HYLDEPLADS.x, y:BARLINJE });
+      }
+      if (this.hylde.length){
+        prøv({ type:'hylde' }, HYLDEPLADS,
+             this.hjælperLeverer() ? { x:HYLDEPLADS.x, y:BARLINJE } : HYLDEPLADS);
       }
 
       if (!bedst) return;
