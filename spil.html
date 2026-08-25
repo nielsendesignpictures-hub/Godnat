@@ -885,10 +885,11 @@
       spillerMå:['station'], bakke:2, tillæg:1,
       tekst:'Du står bag baren og laver drikkevarerne. Kollegaen tager imod gæsterne og henter dem på hylden.' },
 
-    { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:6.4, tål:25, borde:4, madtid:6.5, hældetid:1.8,
-      hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true, nødhjælp:2 },
+    { navn:'Aftenvagt',   ikon:'🤒', harMad:true,  harDrikke:true,  ankomst:7.0, tål:28, borde:4, madtid:6.0, hældetid:1.6,
+      hjælper:null,
       spillerMå:['bord','luge','station'], bakke:3, tillæg:1.3,
-      tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer. Til gengæld får du den store bakke og aftentillæg på alle point.' },
+      besked:'Sygemelding! Du er alene 🤒',
+      tekst:'Der er kommet en sygemelding, og I er underbemandet. Nu er alt dit: døren, bestillingerne, baren, køkkenet og betalingen. Til gengæld får du den store bakke og aftentillæg på alle point.' },
   ];
 
   const DRIKKE = [
@@ -1820,8 +1821,8 @@
     intro: 'Tre vagter med hver sit arbejde. Tryk der, hvor der er brug for dig — men husk, at det tager tid at gå.',
     regler: [
       ['🍔', '<b>Frokost:</b> du gør det hele — tager imod, tager bestillinger, henter mad og serverer.'],
-      ['🥤', '<b>Bar:</b> du bliver bag baren og laver drikkevarer. En kollega løber gulvet.'],
-      ['🌙', '<b>Aften:</b> kollegaen tager imod, du laver drikkevarer, henter mad og serverer.'],
+      ['🥤', '<b>Bar:</b> du bliver bag baren og laver drikkevarer — en kollega løber gulvet.'],
+      ['🤒', '<b>Aften:</b> der er sygemelding. Du er alene med døren, baren, køkkenet og gæsterne.'],
       ['❤️', 'Bakken bærer to — tre om aftenen. Fem glade gæster i træk giver et liv tilbage.'],
     ],
 
@@ -1859,9 +1860,10 @@
 
     nytNiveau(){
       const b = this.bane();
-      råb(b.navn + ' ' + b.ikon);
+      råb(b.besked || (b.navn + ' ' + b.ikon));
+      if (b.besked) effekt(0.5, 0.47, b.navn + ' — alt er dit nu', '#d97a4e', 0.4);
       if (b.tillæg > 1){
-        effekt(0.5, 0.5, 'Aftentillæg +' + Math.round((b.tillæg - 1) * 100) + '%', '#f2dda0', 0.5);
+        effekt(0.5, 0.55, 'Aftentillæg +' + Math.round((b.tillæg - 1) * 100) + '%', '#f2dda0', 0.4);
       }
       this.sætHjælper();
 
