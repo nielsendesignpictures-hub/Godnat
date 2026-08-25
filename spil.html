@@ -1869,6 +1869,18 @@
         if (g.tilstand === 'dør' || g.tilstand === 'bestille') g.ønske = this.nytØnske();
       });
       if (!b.harDrikke) this.bakke = this.bakke.filter(p => p.slags !== 'drikke');
+
+      // Baren lukker: det, der stod klar på hylden, kommer med på bakken.
+      // Ellers ville gæsterne vente på drikkevarer, ingen henter.
+      if (!this.hjælperLeverer() && this.hylde.length){
+        while (this.hylde.length && this.bakke.length < this.bakkeMax()){
+          this.bakke.push({ slags:'drikke', drik: this.hylde.shift().drik });
+        }
+        if (this.hylde.length){
+          this.hylde = [];
+          effekt(HYLDEPLADS.x, HYLDEPLADS.y, 'Baren er ryddet', '#bfae95');
+        }
+      }
       // Bartenderen stiller sig om bag baren. travl og hælder skal nulstilles,
       // ellers når den igangværende handling at slette turen, før den er gået.
       if (!this.måTrykke('bord')){
