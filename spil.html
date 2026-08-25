@@ -40,30 +40,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
-     CAFÉ KAISER — sort, guld og rust med maleri-detaljer
-     Navn, menu, niveauer og gaver skiftes i koden nederst i filen
+     CAFÉ KAISER — sort, guld og rust
+     Ét fladeniveau, én accentfarve, ét mellemrumssystem.
+     Guld betyder "her er der brug for dig". Rust betyder "det haster".
+     Alt andet holder sig i baggrunden.
      ============================================================ */
   :root{
-    --sort:        #0b0a09;   /* dyb sort baggrund */
-    --sort-lys:    #17130f;   /* løftet sort til kort og flader */
-    --guld:        #d9b45b;   /* guld */
-    --guld-lys:    #f2dda0;   /* lyst guld til tekst og highlights */
-    --guld-dyb:    #96762a;   /* mørkt guld til kanter og skygger */
-    --rust:        #b0522f;   /* rust */
-    --rust-lys:    #d97a4e;   /* lys rust */
-    --rust-dyb:    #7d3519;   /* dyb rust */
-    --creme:       #f6ecdb;   /* varm lys tekst */
-    --creme-daemp: #bfae95;   /* dæmpet tekst */
+    --sort:        #0d0b09;
+    --flade:       #17130f;
+    --flade-hoej:  #211a14;
+    --guld:        #d9b45b;
+    --guld-lys:    #f2dda0;
+    --guld-dyb:    #8a6c26;
+    --rust:        #b0522f;
+    --rust-lys:    #d97a4e;
+    --creme:       #f4ead9;
+    --daemp:       #9a8a75;
+    --linje:       rgba(217,180,91,.20);
+    --linje-staerk:rgba(217,180,91,.45);
 
-    --display:"Baloo 2", system-ui, "Segoe UI Rounded", "Arial Rounded MT Bold", sans-serif;
-    --brand:"Playfair Display", Georgia, "Times New Roman", serif;
+    --display:"Baloo 2", system-ui, "Segoe UI Rounded", sans-serif;
+    --brand:"Playfair Display", Georgia, serif;
     --body:"Nunito", system-ui, "Segoe UI", sans-serif;
-    --radius: 22px;
-    --skygge: 0 22px 48px rgba(0,0,0,.6);
+
+    --r-lille: 12px;
+    --r: 16px;
+    --r-stor: 22px;
+    --skygge: 0 20px 44px rgba(0,0,0,.55);
   }
 
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0; height:100%; overflow:hidden; overscroll-behavior:none;}
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; overflow:hidden; overscroll-behavior:none; }
   body{
     font-family:var(--body);
     color:var(--creme);
@@ -83,153 +90,126 @@
     overflow:hidden;
   }
 
-  /* ---------- HUD ---------- */
+  /* ---------- HUD: én linje plus en tynd fremgangsstribe ---------- */
   .hud[hidden]{ display:none; }
   .hud{
     position:relative;
     z-index:3;
     display:flex;
-    flex-direction:column;
-    gap:7px;
-    padding:calc(env(safe-area-inset-top) + 8px) 10px 9px;
+    align-items:center;
+    gap:8px;
+    padding:calc(env(safe-area-inset-top) + 10px) 12px 12px;
     background:var(--sort);
-    box-shadow:0 10px 26px rgba(0,0,0,.55), inset 0 -1px 0 rgba(217,180,91,.42);
   }
 
-  .hud__raekke{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-
-  /* Fremgang mod næste gave */
-  .fremgang{
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .niveauchip{
-    flex:0 0 auto;
-    padding:3px 9px;
-    border-radius:999px;
-    background:linear-gradient(180deg, var(--rust), var(--rust-dyb));
-    border:1px solid rgba(217,180,91,.45);
-    color:var(--guld-lys);
+  .hud > *{ flex:0 0 auto; }
+  .vagt{
     font-family:var(--display);
-    font-weight:800;
-    font-size:.68rem;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
-  .bar{
-    flex:1;
-    height:8px;
-    min-width:40px;
-    border-radius:999px;
-    background:rgba(246,236,219,.10);
-    border:1px solid rgba(217,180,91,.25);
-    overflow:hidden;
-  }
-  .bar__fyld{
-    height:100%;
-    width:0%;
-    border-radius:999px;
-    background:linear-gradient(90deg, var(--rust-lys), var(--guld-lys));
-    box-shadow:0 0 12px rgba(217,180,91,.55);
-    transition:width .35s ease;
-  }
-  .fremgang__tekst{
-    flex:0 0 auto;
-    font-size:.72rem;
     font-weight:700;
-    letter-spacing:.02em;
-    color:var(--creme-daemp);
-    white-space:nowrap;
-  }
-
-  .opskrift{
-    flex:1;
-    min-width:0;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    border-radius:999px;
-    background:rgba(217,180,91,.10);
-    border:1px solid rgba(217,180,91,.30);
-  }
-  .opskrift__navn{
-    font-family:var(--display);
-    font-weight:800;
-    font-size:.86rem;
-    letter-spacing:.02em;
-    color:var(--guld-lys);
+    font-size:.9rem;
+    letter-spacing:.01em;
+    color:var(--creme);
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    max-width:46%;
+    max-width:38%;
   }
-  .opskrift__liste{
+  .varer{
     display:flex;
-    gap:4px;
     align-items:center;
-    flex:1;
+    gap:5px;
+    flex-shrink:1;
     min-width:0;
     overflow:hidden;
+    white-space:nowrap;
+    font-size:.95rem;
+    line-height:1;
+  }
+  .varer > span{ white-space:nowrap; }
+  .varer .tal{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:.8rem;
+    color:var(--daemp);
+    margin-right:4px;
   }
   .ingrediens{
-    font-size:clamp(1.05rem, 4.6vw, 1.5rem);
     line-height:1;
-    filter:grayscale(.8);
-    opacity:.45;
-    transition:transform .18s ease, opacity .18s ease, filter .18s ease;
+    opacity:.32;
+    filter:grayscale(1);
+    transition:opacity .18s ease, filter .18s ease, transform .18s ease;
   }
-  .ingrediens.klar{ filter:none; opacity:.38; transform:scale(.82); }
-  .ingrediens.naeste{
-    filter:none;
-    opacity:1;
-    animation:puls 1s ease-in-out infinite;
-  }
-  @keyframes puls{
-    0%,100%{ transform:scale(1); }
-    50%{ transform:scale(1.28); }
-  }
+  .ingrediens.klar{ opacity:.22; transform:scale(.85); }
+  .ingrediens.naeste{ opacity:1; filter:none; transform:scale(1.18); }
 
-  .hud__tal{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    line-height:1;
-    min-width:60px;
-  }
+  .hud__spacer{ flex:1 1 auto; min-width:6px; }
+
   .point{
     font-family:var(--display);
     font-weight:800;
-    font-size:1.5rem;
-    color:var(--guld);
-    text-shadow:0 0 14px rgba(217,180,91,.35);
+    font-size:1.25rem;
+    line-height:1;
+    color:var(--guld-lys);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+    margin-left:4px;
   }
-  .liv{ font-size:.95rem; letter-spacing:1px; margin-top:3px; }
+  .liv{ font-size:.8rem; letter-spacing:.5px; white-space:nowrap; }
 
   .ikonknap{
-    width:42px; height:42px;
+    width:36px; height:36px;
     flex:0 0 auto;
     display:grid; place-items:center;
-    font-size:1.15rem;
-    border-radius:14px;
-    border:1px solid rgba(217,180,91,.30);
-    background:rgba(217,180,91,.10);
+    font-size:1rem;
+    border-radius:var(--r-lille);
+    border:1px solid var(--linje);
+    background:transparent;
     color:var(--creme);
     cursor:pointer;
   }
   .ikonknap:active{ transform:scale(.94); }
 
+  .fremgang{
+    position:absolute;
+    left:12px; right:12px; bottom:5px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .fremgang__niveau{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    color:var(--daemp);
+  }
+  .bar{
+    flex:1;
+    height:3px;
+    border-radius:2px;
+    background:rgba(244,234,217,.10);
+    overflow:hidden;
+  }
+  .bar__fyld{
+    height:100%;
+    width:0%;
+    border-radius:2px;
+    background:var(--guld);
+    transition:width .35s ease;
+  }
+  .fremgang__maal{
+    font-size:.62rem;
+    font-weight:700;
+    color:var(--daemp);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+
   /* ---------- Spilleflade ---------- */
   .flade{ position:relative; flex:1; min-height:0; }
   canvas{ display:block; width:100%; height:100%; touch-action:none; }
 
-  /* ---------- Overlays ---------- */
+  /* ---------- Skærme ---------- */
   .overlay{
     position:absolute;
     inset:0;
@@ -237,438 +217,352 @@
     display:grid;
     place-items:center;
     padding:16px;
-    background:rgba(8,7,6,.78);
-    backdrop-filter:blur(10px);
+    background:rgba(8,7,6,.82);
+    backdrop-filter:blur(8px);
   }
   .overlay.skjult{ display:none; }
 
   .kort{
-    position:relative;
-    width:min(100%, 420px);
+    width:min(100%, 400px);
     max-height:100%;
     overflow-y:auto;
-    padding:24px 20px 22px;
-    border-radius:var(--radius);
-    background:
-      radial-gradient(120% 90% at 50% 0%, rgba(176,82,47,.22), transparent 62%),
-      linear-gradient(180deg, #1b1613, #0e0c0a);
-    border:1px solid rgba(217,180,91,.42);
-    box-shadow:var(--skygge), inset 0 0 0 1px rgba(217,180,91,.12);
+    padding:26px 22px 22px;
+    border-radius:var(--r-stor);
+    background:var(--flade);
+    border:1px solid var(--linje);
+    box-shadow:var(--skygge);
     color:var(--creme);
     text-align:center;
   }
 
   .maerke{
     display:inline-block;
-    padding:6px 16px;
-    border-radius:999px;
-    background:linear-gradient(180deg, var(--rust), var(--rust-dyb));
-    border:1px solid rgba(217,180,91,.55);
-    color:var(--guld-lys);
     font-family:var(--brand);
     font-weight:700;
-    font-size:.82rem;
-    letter-spacing:.16em;
+    font-size:.78rem;
+    letter-spacing:.22em;
     text-transform:uppercase;
+    color:var(--guld);
   }
 
   .kort h1{
     font-family:var(--display);
     font-weight:800;
-    font-size:clamp(1.9rem, 9vw, 2.7rem);
-    line-height:1;
-    margin:14px 0 6px;
-    color:var(--guld-lys);
-    text-shadow:0 2px 0 rgba(0,0,0,.5);
+    font-size:clamp(1.8rem, 8vw, 2.4rem);
+    line-height:1.02;
+    margin:10px 0 8px;
+    color:var(--creme);
+    text-wrap:balance;
   }
   .kort h2{
     font-family:var(--display);
     font-weight:800;
-    font-size:clamp(1.6rem, 7.5vw, 2.2rem);
+    font-size:clamp(1.5rem, 6.5vw, 2rem);
     line-height:1.05;
-    margin:12px 0 4px;
-    color:var(--guld-lys);
-  }
-  .kort p{ margin:0 0 12px; font-size:1rem; line-height:1.5; color:var(--creme-daemp); }
-
-  .regler{
-    list-style:none;
-    margin:16px 0 20px;
-    padding:0;
-    text-align:left;
-    display:grid;
-    gap:8px;
-  }
-  .regler li{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 12px;
-    border-radius:14px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.18);
-    font-size:.95rem;
-    line-height:1.35;
+    margin:8px 0 8px;
     color:var(--creme);
-  }
-  .regler li b{ color:var(--guld-lys); }
-  .regler .ikon{ font-size:1.4rem; flex:0 0 auto; }
-
-  /* Gaver */
-  .gaveliste{
-    display:grid;
-    gap:7px;
-    margin:0 0 20px;
-    text-align:left;
-  }
-  .gavelinje{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:9px 12px;
-    border-radius:14px;
-    background:rgba(217,180,91,.06);
-    border:1px solid rgba(217,180,91,.22);
-  }
-  .gavelinje__ikon{ font-size:1.35rem; flex:0 0 auto; }
-  .gavelinje__tekst{ flex:1; min-width:0; font-size:.9rem; line-height:1.3; }
-  .gavelinje__point{
-    flex:0 0 auto;
-    font-family:var(--display);
-    font-weight:800;
-    font-size:.92rem;
-    color:var(--guld);
-  }
-  .gavelinje--vundet{
-    background:rgba(217,180,91,.16);
-    border-color:rgba(217,180,91,.55);
-  }
-
-  .gavekort{
-    margin:0 0 14px;
-    padding:15px 14px;
-    border-radius:18px;
-    background:
-      radial-gradient(120% 100% at 50% 0%, rgba(217,180,91,.28), transparent 70%),
-      linear-gradient(180deg, #241a10, #140f0a);
-    border:1px solid rgba(217,180,91,.6);
-    box-shadow:0 0 30px rgba(217,180,91,.18) inset;
-  }
-  .gavekort__ikon{ font-size:2rem; line-height:1; }
-  .gavekort h3{
-    margin:8px 0 4px;
-    font-family:var(--display);
-    font-weight:800;
-    font-size:1.3rem;
-    line-height:1.15;
-    color:var(--guld-lys);
-  }
-  .gavekort p{ margin:0 0 12px; font-size:.9rem; color:var(--creme-daemp); }
-  .kode{
-    display:inline-block;
-    padding:9px 16px;
-    border-radius:12px;
-    background:rgba(11,10,9,.72);
-    border:1px dashed rgba(217,180,91,.7);
-    font-family:var(--display);
-    font-weight:800;
-    font-size:1.5rem;
-    letter-spacing:.16em;
-    color:var(--guld-lys);
-  }
-  .gavekort small{
-    display:block;
-    margin-top:10px;
-    font-size:.76rem;
-    line-height:1.4;
-    color:var(--creme-daemp);
-  }
-  .naeste-gave{
-    margin:0 0 18px;
-    padding:12px;
-    border-radius:14px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.2);
-    font-size:.9rem;
-    line-height:1.4;
-    color:var(--creme-daemp);
-  }
-  .naeste-gave b{ color:var(--guld-lys); }
-
-  .koder{
-    display:grid;
-    gap:8px;
-    margin:14px 0 6px;
-  }
-  .koder div{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:10px 12px;
-    border-radius:12px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.22);
-    text-align:left;
-    font-size:.86rem;
-  }
-  .koder b{
-    font-family:var(--display);
-    font-size:1.1rem;
-    letter-spacing:.12em;
-    color:var(--guld-lys);
-  }
-
-  .knap{
-    display:block;
-    width:100%;
-    padding:16px 18px;
-    border:0;
-    border-radius:16px;
-    background:linear-gradient(180deg, var(--guld-lys), var(--guld));
-    color:#1a1409;
-    font-family:var(--display);
-    font-weight:800;
-    font-size:1.25rem;
-    letter-spacing:.04em;
-    cursor:pointer;
-    box-shadow:0 6px 0 var(--guld-dyb);
-    transition:transform .08s ease, box-shadow .08s ease;
-  }
-  .knap:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--guld-dyb); }
-  .knap + .knap{ margin-top:10px; }
-  .knap--rolig{
-    background:transparent;
-    color:var(--creme);
-    border:1px solid rgba(217,180,91,.45);
-    box-shadow:0 6px 0 rgba(150,118,42,.35);
-    font-size:1.05rem;
-  }
-  .knap--rolig:active{ box-shadow:0 2px 0 rgba(150,118,42,.35); }
-
-  .resultat{
-    display:flex;
-    gap:10px;
-    margin:14px 0 16px;
-  }
-  .resultat div{
-    flex:1;
-    padding:12px 8px;
-    border-radius:16px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.22);
-  }
-  .resultat b{
-    display:block;
-    font-family:var(--display);
-    font-size:1.7rem;
-    line-height:1;
-    color:var(--guld);
-  }
-  .resultat span{
-    font-size:.72rem;
-    text-transform:uppercase;
-    letter-spacing:.1em;
-    color:var(--creme-daemp);
-  }
-
-  .fod{
-    margin-top:26px;
-    font-size:.78rem;
-    color:var(--creme-daemp);
-    line-height:1.4;
-  }
-
-  /* Stor midtskærms-besked (fx "Værsgo!") */
-  .raab{
-    position:absolute;
-    left:50%;
-    top:38%;
-    z-index:4;
-    transform:translate(-50%,-50%) scale(.6);
-    font-family:var(--display);
-    font-weight:800;
-    font-size:clamp(1.8rem, 9.5vw, 3.2rem);
-    color:var(--guld-lys);
-    text-shadow:
-      3px 0 0 #14100c, -3px 0 0 #14100c, 0 3px 0 #14100c, 0 -3px 0 #14100c,
-      2px 2px 0 #14100c, -2px 2px 0 #14100c, 2px -2px 0 #14100c, -2px -2px 0 #14100c,
-      0 12px 26px rgba(0,0,0,.65);
-    opacity:0;
-    pointer-events:none;
-    max-width:92vw;
-    text-align:center;
     text-wrap:balance;
-    line-height:1.05;
   }
-  .raab.vis{ animation:raab 1.1s ease-out forwards; }
-  @keyframes raab{
-    0%{ opacity:0; transform:translate(-50%,-50%) scale(.6) rotate(-4deg); }
-    22%{ opacity:1; transform:translate(-50%,-50%) scale(1.12) rotate(2deg); }
-    40%{ transform:translate(-50%,-50%) scale(1) rotate(0deg); }
-    100%{ opacity:0; transform:translate(-50%,-58%) scale(1); }
-  }
+  .kort p{ margin:0 0 16px; font-size:.95rem; line-height:1.5; color:var(--daemp); }
 
-  @media (min-height: 720px){
-    .kort{ padding:30px 26px 26px; }
-  }
-
-  /* ---------- Forside med de to spil ---------- */
-  .spilvalg{
-    display:grid;
-    gap:10px;
-    margin:18px 0 20px;
-    text-align:left;
-  }
+  /* ---------- Valg af spil ---------- */
+  .spilvalg{ display:grid; gap:8px; margin:20px 0; text-align:left; }
   .spilkort{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:14px;
     width:100%;
     padding:14px;
-    border-radius:18px;
-    background:
-      radial-gradient(120% 120% at 0% 0%, rgba(176,82,47,.28), transparent 60%),
-      linear-gradient(180deg, #1d1713, #110d0a);
-    border:1px solid rgba(217,180,91,.35);
+    border-radius:var(--r);
+    background:var(--flade-hoej);
+    border:1px solid var(--linje);
     color:var(--creme);
     text-align:left;
     cursor:pointer;
-    transition:transform .1s ease, border-color .1s ease;
+    transition:border-color .12s ease, transform .08s ease;
   }
-  .spilkort:active{ transform:scale(.985); border-color:rgba(217,180,91,.75); }
-  .spilkort__ikon{
-    flex:0 0 auto;
-    width:52px; height:52px;
-    display:grid; place-items:center;
-    font-size:1.8rem;
-    border-radius:14px;
-    background:rgba(217,180,91,.12);
-    border:1px solid rgba(217,180,91,.3);
-  }
+  .spilkort:active{ transform:scale(.99); }
+  .spilkort--stor{ border-color:var(--linje-staerk); }
+  .spilkort__ikon{ flex:0 0 auto; font-size:1.7rem; line-height:1; }
+  .spilkort--stor .spilkort__ikon{ font-size:2.1rem; }
   .spilkort__tekst{ flex:1; min-width:0; }
   .spilkort__tekst strong{
     display:block;
     font-family:var(--display);
     font-weight:800;
-    font-size:1.15rem;
-    line-height:1.15;
-    color:var(--guld-lys);
+    font-size:1.05rem;
+    line-height:1.2;
+    color:var(--creme);
   }
+  .spilkort--stor .spilkort__tekst strong{ font-size:1.25rem; color:var(--guld-lys); }
   .spilkort__tekst span{
     display:block;
     margin-top:2px;
-    font-size:.86rem;
+    font-size:.82rem;
     line-height:1.35;
-    color:var(--creme-daemp);
+    color:var(--daemp);
   }
-  .spilkort__pil{ flex:0 0 auto; color:var(--guld); font-size:1.2rem; }
-  .spilkort--stor{ padding:16px 14px; border-color:rgba(217,180,91,.55); }
-  .spilkort--stor .spilkort__ikon{ width:60px; height:60px; font-size:2.1rem; }
-  .spilkort--stor .spilkort__tekst strong{ font-size:1.3rem; }
-  .spilkort__baner{
-    display:block;
-    margin-top:5px;
-    font-size:.78rem;
-    letter-spacing:.02em;
-    color:var(--guld);
-  }
-  .spilkort--lille .spilkort__ikon{ width:44px; height:44px; font-size:1.4rem; }
-  .spilkort--lille .spilkort__tekst strong{ font-size:1rem; }
+  .spilkort__baner{ margin-top:6px !important; color:var(--guld) !important; font-size:.76rem !important; }
+  .spilkort__pil{ flex:0 0 auto; color:var(--guld-dyb); font-size:1.1rem; }
 
-  /* Nyhedsbrev */
+  /* ---------- Lister ---------- */
+  .regler{ list-style:none; margin:0 0 20px; padding:0; text-align:left; display:grid; gap:10px; }
+  .regler li{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    font-size:.9rem;
+    line-height:1.4;
+    color:var(--daemp);
+  }
+  .regler li b{ color:var(--creme); font-weight:700; }
+  .regler .ikon{ font-size:1.1rem; flex:0 0 auto; line-height:1.3; }
+
+  .gaveliste{ display:grid; gap:6px; margin:0 0 20px; text-align:left; }
+  .gavelinje{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:9px 12px;
+    border-radius:var(--r-lille);
+    background:var(--flade-hoej);
+    border:1px solid transparent;
+  }
+  .gavelinje__ikon{ font-size:1.1rem; flex:0 0 auto; }
+  .gavelinje__tekst{ flex:1; min-width:0; font-size:.85rem; color:var(--creme); }
+  .gavelinje__point{
+    flex:0 0 auto;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:.85rem;
+    color:var(--guld);
+    font-variant-numeric:tabular-nums;
+  }
+  .gavelinje--vundet{ border-color:var(--linje-staerk); }
+  .gavelinje--vundet .gavelinje__point{ color:var(--daemp); }
+
+  .eyebrow-menu{
+    margin:0 0 6px;
+    font-size:.64rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--daemp);
+  }
+  .menukort{ display:grid; gap:6px; margin:0 0 4px; text-align:left; }
+  .menukort div{
+    padding:9px 12px;
+    border-radius:var(--r-lille);
+    background:var(--flade-hoej);
+    font-size:.78rem;
+    line-height:1.35;
+    color:var(--daemp);
+  }
+  .menukort b{
+    display:block;
+    font-family:var(--display);
+    font-weight:700;
+    font-size:.9rem;
+    color:var(--creme);
+    margin-bottom:1px;
+  }
+  .menukort em{ font-style:normal; }
+
+  /* ---------- Knapper ---------- */
+  .knap{
+    display:block;
+    width:100%;
+    padding:15px 18px;
+    border:0;
+    border-radius:var(--r);
+    background:var(--guld);
+    color:#1a1409;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.1rem;
+    letter-spacing:.03em;
+    cursor:pointer;
+    transition:transform .08s ease, background .12s ease;
+  }
+  .knap:active{ transform:scale(.985); background:var(--guld-lys); }
+  .knap + .knap{ margin-top:8px; }
+  .knap--rolig{
+    background:transparent;
+    color:var(--daemp);
+    border:1px solid var(--linje);
+    font-size:.95rem;
+    font-weight:700;
+  }
+  .knap--rolig:active{ background:rgba(217,180,91,.08); }
+
+  /* ---------- Resultat ---------- */
+  .resultat{ display:flex; gap:8px; margin:0 0 18px; }
+  .resultat div{ flex:1; padding:12px 6px; border-radius:var(--r-lille); background:var(--flade-hoej); }
+  .resultat b{
+    display:block;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.5rem;
+    line-height:1;
+    color:var(--creme);
+    font-variant-numeric:tabular-nums;
+  }
+  .resultat span{
+    display:block;
+    margin-top:4px;
+    font-size:.62rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--daemp);
+  }
+
+  /* ---------- Gaven ---------- */
+  .gavekort{
+    margin:0 0 16px;
+    padding:20px 16px;
+    border-radius:var(--r);
+    background:var(--flade-hoej);
+    border:1px solid var(--linje-staerk);
+  }
+  .gavekort__ikon{ font-size:1.8rem; line-height:1; }
+  .gavekort h3{
+    margin:8px 0 2px;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.2rem;
+    line-height:1.2;
+    color:var(--guld-lys);
+    text-wrap:balance;
+  }
+  .gavekort p{ margin:0 0 14px; font-size:.85rem; color:var(--daemp); }
+  .kode{
+    display:inline-block;
+    padding:10px 18px;
+    border-radius:var(--r-lille);
+    background:var(--sort);
+    border:1px dashed var(--linje-staerk);
+    font-family:var(--display);
+    font-weight:800;
+    font-size:1.35rem;
+    letter-spacing:.18em;
+    color:var(--guld-lys);
+  }
+  .gavekort small{
+    display:block;
+    margin-top:12px;
+    font-size:.72rem;
+    line-height:1.45;
+    color:var(--daemp);
+  }
+  .naeste-gave{
+    margin:0 0 16px;
+    padding:14px;
+    border-radius:var(--r-lille);
+    background:var(--flade-hoej);
+    font-size:.85rem;
+    line-height:1.45;
+    color:var(--daemp);
+  }
+  .naeste-gave b{ color:var(--creme); }
+
+  /* ---------- Nyhedsbrev ---------- */
   .nyhedsbrev{
-    margin:0 0 18px;
+    margin:0 0 16px;
     padding:16px 14px;
-    border-radius:18px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.28);
+    border-radius:var(--r);
+    background:var(--flade-hoej);
+    border:1px solid var(--linje);
     text-align:left;
   }
   .nyhedsbrev h4{
     margin:0 0 4px;
     font-family:var(--display);
     font-weight:800;
-    font-size:1.05rem;
-    color:var(--guld-lys);
+    font-size:1rem;
+    color:var(--creme);
   }
-  .nyhedsbrev p{ margin:0 0 12px; font-size:.84rem; line-height:1.4; color:var(--creme-daemp); }
+  .nyhedsbrev p{ margin:0 0 12px; font-size:.8rem; line-height:1.45; color:var(--daemp); }
   .nyhedsbrev input[type="email"]{
     width:100%;
     padding:12px 14px;
-    border-radius:12px;
-    border:1px solid rgba(217,180,91,.35);
-    background:rgba(11,10,9,.6);
+    border-radius:var(--r-lille);
+    border:1px solid var(--linje);
+    background:var(--sort);
     color:var(--creme);
     font-family:var(--body);
     font-size:1rem;
   }
-  .nyhedsbrev input[type="email"]:focus{
-    outline:2px solid var(--guld);
-    outline-offset:1px;
-  }
+  .nyhedsbrev input[type="email"]:focus{ outline:2px solid var(--guld); outline-offset:1px; }
   .nyhedsbrev label.samtykke{
     display:flex;
-    gap:9px;
+    gap:10px;
     align-items:flex-start;
-    margin:11px 0 13px;
-    font-size:.78rem;
-    line-height:1.35;
-    color:var(--creme-daemp);
+    margin:12px 0 14px;
+    font-size:.76rem;
+    line-height:1.4;
+    color:var(--daemp);
     cursor:pointer;
   }
-  .nyhedsbrev input[type="checkbox"]{
-    flex:0 0 auto;
-    width:20px; height:20px;
-    margin:1px 0 0;
-    accent-color:var(--guld);
-  }
-  .nyhedsbrev .knap{ font-size:1rem; padding:13px 16px; }
+  .nyhedsbrev input[type="checkbox"]{ flex:0 0 auto; width:19px; height:19px; margin:0; accent-color:var(--guld); }
   .nyhedsbrev a{ color:var(--guld); }
-  .nyhedsbrev .fejl{ margin:8px 0 0; font-size:.78rem; color:var(--rust-lys); }
+  .nyhedsbrev .fejl{ margin:10px 0 0; font-size:.76rem; color:var(--rust-lys); }
   .nyhedsbrev--tak{ text-align:center; }
 
-  .sovselinje{
-    margin:-4px 0 14px;
-    font-size:.84rem;
-    line-height:1.4;
-    color:var(--creme-daemp);
-  }
-
-  /* Menuen over burgerne på reglerskærmen */
-  .eyebrow-menu{
-    margin:0 0 2px;
-    font-size:.7rem;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--creme-daemp);
-  }
-  .menukort{
-    display:grid;
-    gap:8px;
-    margin:0 0 18px;
+  .koder{ display:grid; gap:6px; margin:14px 0 6px; }
+  .koder div{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:var(--r-lille);
+    background:var(--flade-hoej);
     text-align:left;
+    font-size:.82rem;
+    color:var(--daemp);
   }
-  .menukort div{
-    padding:8px 11px;
-    border-radius:12px;
-    background:rgba(246,236,219,.05);
-    border:1px solid rgba(217,180,91,.18);
-    font-size:.78rem;
-    line-height:1.3;
-  }
-  .menukort b{
-    display:block;
+  .koder b{
     font-family:var(--display);
-    font-size:.95rem;
+    font-size:1rem;
+    letter-spacing:.14em;
     color:var(--guld-lys);
   }
-  .menukort em{ font-style:normal; color:var(--creme-daemp); }
 
-  /* Lange opskrifter i HUD'en må fylde mindre */
-  .opskrift__liste[data-lang="5"] .ingrediens,
-  .opskrift__liste[data-lang="6"] .ingrediens{
-    font-size:clamp(.88rem, 3.7vw, 1.2rem);
+  .fod{ margin-top:16px; font-size:.72rem; color:var(--daemp); line-height:1.45; }
+
+  /* ---------- Beskeder midt på skærmen ---------- */
+  .raab{
+    position:absolute;
+    left:50%;
+    top:34%;
+    z-index:4;
+    transform:translate(-50%,-50%) scale(.7);
+    max-width:88vw;
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(1.6rem, 8vw, 2.6rem);
+    line-height:1.05;
+    text-align:center;
+    text-wrap:balance;
+    color:var(--guld-lys);
+    text-shadow:0 2px 18px rgba(0,0,0,.9), 0 0 3px rgba(13,11,9,.9);
+    opacity:0;
+    pointer-events:none;
+  }
+  .raab.vis{ animation:raab 1.1s cubic-bezier(.2,.8,.3,1) forwards; }
+  @keyframes raab{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(.7); }
+    18%{ opacity:1; transform:translate(-50%,-50%) scale(1.04); }
+    35%{ transform:translate(-50%,-50%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-64%) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .raab.vis{ animation-duration:.5s; }
+    .bar__fyld{ transition:none; }
+  }
+
+  @media (min-height: 760px){
+    .kort{ padding:30px 26px 24px; }
   }
 </style>
 </head>
@@ -676,23 +570,18 @@
 <div id="app">
 
   <header class="hud">
-    <div class="hud__raekke">
-      <div class="opskrift">
-        <span class="opskrift__navn" id="opskriftNavn">Klar?</span>
-        <span class="opskrift__liste" id="opskriftListe"></span>
-      </div>
-      <div class="hud__tal">
-        <span class="point" id="point">0</span>
-        <span class="liv" id="liv">❤️❤️❤️</span>
-      </div>
-      <button class="ikonknap" id="lydKnap" type="button" aria-label="Lyd til/fra">🔇</button>
-      <button class="ikonknap" id="pauseKnap" type="button" aria-label="Pause">⏸</button>
-    </div>
+    <span class="vagt" id="opskriftNavn">Klar?</span>
+    <span class="varer" id="opskriftListe"></span>
+    <span class="hud__spacer"></span>
+    <span class="point" id="point">0</span>
+    <span class="liv" id="liv">❤️❤️❤️</span>
+    <button class="ikonknap" id="lydKnap" type="button" aria-label="Lyd til/fra">🔇</button>
+    <button class="ikonknap" id="pauseKnap" type="button" aria-label="Pause">⏸</button>
 
     <div class="fremgang">
-      <span class="niveauchip" id="niveauChip">Niveau 1</span>
+      <span class="fremgang__niveau" id="niveauChip">1</span>
       <div class="bar"><div class="bar__fyld" id="barFyld"></div></div>
-      <span class="fremgang__tekst" id="fremgangTekst">🎫 1500</span>
+      <span class="fremgang__maal" id="fremgangTekst">🎫 1500</span>
     </div>
   </header>
 
@@ -800,7 +689,7 @@
      ============================================================ */
   const CAFE = {
     navn: 'Café Kaiser',
-    slogan: 'Prøv køkkenet og gulvet — og spil gaver hjem.',
+    slogan: 'Tag en vagt i caféen — og spil gaver hjem.',
     kodeSalt: 'kaiser-2026',                 // ← skift denne, og alle gavekoder skifter
   };
 
@@ -1165,7 +1054,7 @@
   function opdaterHUD(){
     elPoint.textContent = kerne.point;
     elLiv.textContent = '❤️'.repeat(Math.max(0, kerne.liv)) + '🖤'.repeat(Math.max(0, 3 - kerne.liv));
-    elNiveauChip.textContent = 'Niveau ' + (kerne.niveau + 1);
+    if (elNiveauChip) elNiveauChip.textContent = 'N' + (kerne.niveau + 1);
 
     const næste = GAVER[kerne.gaveTrin + 1];
     if (næste){
@@ -1205,68 +1094,36 @@
   let bgLærred = null;
   let bgType = null;
 
-  /* Fælles malerisk bund: farvefelter, penselstrøg og bladguld */
-  function malLærred(g, r){
+  /* Rolig bund: mørk flade og ét varmt lys. Baggrunden skal ikke ses —
+     den skal lade brikkerne på bordet træde frem. */
+  function malBund(g){
     const bund = g.createLinearGradient(0, 0, 0, H);
-    bund.addColorStop(0,    '#100d0b');
-    bund.addColorStop(0.55, '#1a1410');
-    bund.addColorStop(1,    '#241a13');
+    bund.addColorStop(0,    '#0b0a08');
+    bund.addColorStop(0.55, '#14100c');
+    bund.addColorStop(1,    '#1b1511');
     g.fillStyle = bund;
     g.fillRect(0, 0, B, H);
 
-    for (let i = 0; i < 7; i++){
-      const x = r() * B, y = r() * H;
-      const rad = (0.28 + r() * 0.45) * Math.max(B, H) * 0.5;
-      const felt = g.createRadialGradient(x, y, rad * 0.05, x, y, rad);
-      felt.addColorStop(0, r() < 0.55 ? 'rgba(176, 82, 47, .16)' : 'rgba(150, 118, 42, .13)');
-      felt.addColorStop(1, 'rgba(0,0,0,0)');
-      g.fillStyle = felt;
-      g.fillRect(0, 0, B, H);
-    }
-
-    const strøg = Math.round((B * H) / 9000);
-    const palet = ['#b0522f','#7d3519','#96762a','#d9b45b','#2a1d15','#5a2f18'];
-    for (let i = 0; i < strøg; i++){
-      const x = r() * B, y = r() * H;
-      const l = (0.18 + r() * 0.42) * Math.max(B, H) * 0.5;
-      const t = (1.2 + r() * 2.4) * Math.max(5, Math.min(B, H) * 0.02);
-      g.save();
-      g.translate(x, y);
-      g.rotate((r() - 0.5) * 0.7 + (r() < 0.35 ? Math.PI / 2 : 0));
-      g.globalAlpha = 0.025 + r() * 0.05;
-      g.fillStyle = palet[Math.floor(r() * palet.length)];
-      g.beginPath(); g.ellipse(0, 0, l / 2, t / 2, 0, 0, Math.PI * 2); g.fill();
-      g.globalAlpha = 0.02 + r() * 0.035;
-      g.fillStyle = '#d9b45b';
-      g.beginPath(); g.ellipse(0, -t * 0.22, l / 2.4, t / 7, 0, 0, Math.PI * 2); g.fill();
-      g.restore();
-    }
-
-    for (let i = 0; i < strøg * 2.2; i++){
-      g.globalAlpha = 0.05 + r() * 0.14;
-      g.fillStyle = r() < 0.7 ? '#d9b45b' : '#f2dda0';
-      const st = 0.8 + r() * 1.6;
-      g.fillRect(r() * B, r() * H, st, st);
-    }
-    g.globalAlpha = 1;
-    return strøg;
-  }
-
-  function guldRamme(g){
-    g.strokeStyle = 'rgba(217, 180, 91, .38)';
-    g.lineWidth = 2;
-    g.strokeRect(7, 7, B - 14, H - 14);
-    g.strokeStyle = 'rgba(217, 180, 91, .18)';
-    g.lineWidth = 1;
-    g.strokeRect(13, 13, B - 26, H - 26);
-  }
-
-  function vignet(g){
-    const vig = g.createRadialGradient(B / 2, H * 0.45, Math.min(B, H) * 0.25, B / 2, H * 0.5, Math.max(B, H) * 0.78);
-    vig.addColorStop(0, 'rgba(0,0,0,0)');
-    vig.addColorStop(1, 'rgba(0,0,0,.62)');
-    g.fillStyle = vig;
+    const lys = g.createRadialGradient(B / 2, H * 0.10, 10, B / 2, H * 0.10, Math.max(B, H) * 0.85);
+    lys.addColorStop(0, 'rgba(217, 180, 91, .10)');
+    lys.addColorStop(1, 'rgba(217, 180, 91, 0)');
+    g.fillStyle = lys;
     g.fillRect(0, 0, B, H);
+  }
+
+  function hårlinje(g, y, styrke = 0.18){
+    g.fillStyle = 'rgba(217, 180, 91, ' + styrke + ')';
+    g.fillRect(0, y, B, 1);
+  }
+
+  function skiltetekst(g, tekst, x, y, størrelse, farve){
+    g.save();
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.font = '700 ' + størrelse + 'px "Playfair Display", Georgia, serif';
+    g.fillStyle = farve;
+    g.fillText(tekst, x, y);
+    g.restore();
   }
 
   function tegnBaggrund(){
@@ -1286,15 +1143,14 @@
 
   function tegnEffekter(){
     ctx.save();
-    ctx.font = '800 ' + Math.max(16, B * 0.05) + 'px "Baloo 2", system-ui, sans-serif';
+    ctx.font = '800 ' + Math.max(14, B * 0.042) + 'px "Baloo 2", system-ui, sans-serif';
     kerne.effekter.forEach(e => {
       ctx.globalAlpha = Math.max(0, e.liv);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = 'rgba(12,10,8,.85)';
+      ctx.shadowColor = 'rgba(11,10,8,.9)';
+      ctx.shadowBlur = 8;
       ctx.fillStyle = e.farve;
-      const ex = e.x * B, ey = (e.y - (1 - e.liv) * 0.12) * H;
-      ctx.strokeText(e.tekst, ex, ey);
-      ctx.fillText(e.tekst, ex, ey);
+      ctx.fillText(e.tekst, e.x * B, (e.y - (1 - e.liv) * 0.10) * H);
+      ctx.shadowBlur = 0;
     });
     ctx.restore();
 
@@ -1347,71 +1203,42 @@
      SPIL 1 — KØKKENET: byg burgeren
      ============================================================ */
   function malKøkken(g){
-    const r = frø(20240823);
-    malLærred(g, r);
+    malBund(g);
 
-    // Hængelamper med varmt guldlys
+    // Tre lyskegler over disken — kun antydet
     for (let i = 0; i < 3; i++){
       const x = B * (0.5 / 3 + i / 3);
-      const snorH = H * 0.045;
-      const kegle = g.createLinearGradient(x, snorH, x, H * 0.72);
-      kegle.addColorStop(0,   'rgba(242, 221, 160, .30)');
-      kegle.addColorStop(0.5, 'rgba(217, 180, 91, .10)');
-      kegle.addColorStop(1,   'rgba(217, 180, 91, 0)');
+      const top = H * 0.03;
+      const kegle = g.createLinearGradient(x, top, x, H * 0.66);
+      kegle.addColorStop(0,   'rgba(242, 221, 160, .16)');
+      kegle.addColorStop(1,   'rgba(242, 221, 160, 0)');
       g.fillStyle = kegle;
       g.beginPath();
-      g.moveTo(x - 15, snorH + 10);
-      g.lineTo(x + 15, snorH + 10);
-      g.lineTo(x + B * 0.19, H * 0.72);
-      g.lineTo(x - B * 0.19, H * 0.72);
+      g.moveTo(x - 13, top + 8);
+      g.lineTo(x + 13, top + 8);
+      g.lineTo(x + B * 0.17, H * 0.66);
+      g.lineTo(x - B * 0.17, H * 0.66);
       g.closePath();
       g.fill();
 
-      g.strokeStyle = 'rgba(217, 180, 91, .45)';
-      g.lineWidth = 2;
-      g.beginPath(); g.moveTo(x, 0); g.lineTo(x, snorH); g.stroke();
+      g.strokeStyle = 'rgba(217, 180, 91, .30)';
+      g.lineWidth = 1;
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x, top); g.stroke();
 
-      const skærm = g.createLinearGradient(x - 22, snorH, x + 22, snorH + 12);
-      skærm.addColorStop(0, '#96762a');
-      skærm.addColorStop(0.45, '#f2dda0');
-      skærm.addColorStop(1, '#96762a');
-      g.fillStyle = skærm;
+      g.fillStyle = '#c8a24a';
       g.beginPath();
-      g.moveTo(x - 23, snorH + 13); g.lineTo(x + 23, snorH + 13);
-      g.lineTo(x + 11, snorH); g.lineTo(x - 11, snorH);
+      g.moveTo(x - 19, top + 9); g.lineTo(x + 19, top + 9);
+      g.lineTo(x + 9, top); g.lineTo(x - 9, top);
       g.closePath(); g.fill();
-
-      g.fillStyle = '#fff3cf';
-      g.beginPath(); g.ellipse(x, snorH + 14, 14, 4.5, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#ffeec4';
+      g.beginPath(); g.ellipse(x, top + 10, 11, 3, 0, 0, Math.PI * 2); g.fill();
     }
 
-    vignet(g);
-
-    // Disken forneden: rustfarvet marmor med guldkant
-    const dY = H * 0.905;
-    const disk = g.createLinearGradient(0, dY, 0, H);
-    disk.addColorStop(0, '#7d3519');
-    disk.addColorStop(1, '#3d1c0e');
-    g.fillStyle = disk;
+    // Disken forneden
+    const dY = H * 0.90;
+    g.fillStyle = '#241811';
     g.fillRect(0, dY, B, H - dY);
-    for (let i = 0; i < 26; i++){
-      g.globalAlpha = 0.05 + r() * 0.10;
-      g.fillStyle = r() < 0.5 ? '#d9b45b' : '#c06a3f';
-      g.save();
-      g.translate(r() * B, dY + r() * (H - dY));
-      g.rotate((r() - 0.5) * 0.5);
-      g.fillRect(0, 0, 20 + r() * 90, 1.5 + r() * 2);
-      g.restore();
-    }
-    g.globalAlpha = 1;
-    const kant = g.createLinearGradient(0, 0, B, 0);
-    kant.addColorStop(0, '#96762a');
-    kant.addColorStop(0.5, '#f2dda0');
-    kant.addColorStop(1, '#96762a');
-    g.fillStyle = kant;
-    g.fillRect(0, dY - 3, B, 4);
-
-    guldRamme(g);
+    hårlinje(g, dY, 0.32);
   }
 
   const køkken = {
@@ -1457,7 +1284,6 @@
 
     hud(){
       elOpskriftNavn.textContent = this.burger ? this.burger.ikon : '';
-      elOpskriftNavn.style.maxWidth = '';
       elOpskriftListe.dataset.lang = this.burger ? this.burger.dele.length : 0;
       elOpskriftListe.innerHTML = '';
       if (!this.burger) return;
@@ -1657,163 +1483,76 @@
   /* ============================================================
      TJENERVAGTEN — tre vagter i træk: frokost, bar og aften
      ============================================================ */
+  /* ---------- Gulvets mål ----------
+     Lodret læses skærmen som en café: arbejdsrækken øverst, bartenderens plads
+     under den, afhentningshylden derunder, gulvet i midten og døren nederst. */
+  const ARBEJDS_Y  = 0.085;
+  const BARLINJE   = 0.175;
+  const HYLDEPLADS = { x:0.5, y:0.26 };
+  const HVILE      = { x:0.5, y:0.76 };
+  const LUGE       = { x:0.5, y:ARBEJDS_Y };
+  const STATIONER  = [
+    { x:0.25, y:ARBEJDS_Y, drik:0 },
+    { x:0.50, y:ARBEJDS_Y, drik:1 },
+    { x:0.75, y:ARBEJDS_Y, drik:2 },
+  ];
   const BORDPLADSER = [
-    { x:0.27, y:0.45 }, { x:0.73, y:0.45 },
-    { x:0.27, y:0.70 }, { x:0.73, y:0.70 },
+    { x:0.28, y:0.40 }, { x:0.72, y:0.40 },
+    { x:0.28, y:0.62 }, { x:0.72, y:0.62 },
   ];
-  const LUGE = { x:0.5, y:0.10 };
-  const DØR  = { x:0.5, y:0.905 };
-  const STATIONER = [
-    { x:0.20, y:0.235, drik:0 },
-    { x:0.50, y:0.235, drik:1 },
-    { x:0.80, y:0.235, drik:2 },
-  ];
+  const DØR = { x:0.5, y:0.87 };
+
+  // Man stiller sig ved siden af bordet, så figuren ikke dækker gæsten
+  const vedBord = (i) => ({ x: BORDPLADSER[i].x, y: BORDPLADSER[i].y + 0.055 });
+
+  let FLISER = [LUGE];
+
+  /* Arbejdsrækken fordeles jævnt efter, hvad vagten har brug for.
+     Rækken ligger fast under hele vagten, så man kan lære, hvor tingene er. */
+  function sætLayout(b){
+    const fliser = [];
+    if (b.harMad) fliser.push(LUGE);
+    if (b.harDrikke) fliser.push(STATIONER[0], STATIONER[1], STATIONER[2]);
+    if (!fliser.length) fliser.push(LUGE);
+    fliser.forEach((f, i) => { f.x = (i + 0.5) / fliser.length; f.y = ARBEJDS_Y; });
+    FLISER = fliser;
+  }
 
   const BOBLER = { bestille:'🙋', venter:'⏳', spiser:'😋', betale:'💳' };
 
   function malGulv(g, bane){
-    const r = frø(7112024 + bane * 97);
-    malLærred(g, r);
+    malBund(g);
 
-    // Parketgulv
-    const gulvY = H * 0.28;
-    g.save();
-    g.globalAlpha = 0.5;
-    for (let y = gulvY; y < H; y += Math.max(26, H * 0.055)){
-      g.strokeStyle = 'rgba(217,180,91,.07)';
-      g.lineWidth = 1;
-      g.beginPath(); g.moveTo(0, y); g.lineTo(B, y); g.stroke();
-    }
-    for (let x = 0; x < B; x += Math.max(30, B * 0.14)){
-      g.strokeStyle = 'rgba(217,180,91,.05)';
-      g.beginPath(); g.moveTo(x, gulvY); g.lineTo(x, H); g.stroke();
-    }
-    g.restore();
+    // Arbejdsområdet foroven
+    const bånd = H * 0.15;
+    g.fillStyle = '#15110d';
+    g.fillRect(0, 0, B, bånd);
+    hårlinje(g, bånd, 0.30);
 
-    const b = BANER[bane];
-    const lugeH = H * 0.155;
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-
-    // Bagvæggen: køkkenluge, barhylde eller begge
-    const væg = g.createLinearGradient(0, 0, 0, lugeH);
-    væg.addColorStop(0, '#241a12');
-    væg.addColorStop(1, '#120d0a');
-    g.fillStyle = væg;
-    g.fillRect(0, 0, B, lugeH);
-
-    const skær = g.createLinearGradient(0, lugeH * 0.25, 0, lugeH * 1.9);
-    skær.addColorStop(0, 'rgba(242,221,160,.22)');
-    skær.addColorStop(1, 'rgba(242,221,160,0)');
-    g.fillStyle = skær;
-    g.fillRect(0, lugeH * 0.25, B, lugeH * 1.7);
-
-    const kant = g.createLinearGradient(0, 0, B, 0);
-    kant.addColorStop(0, '#96762a'); kant.addColorStop(0.5, '#f2dda0'); kant.addColorStop(1, '#96762a');
-    g.fillStyle = kant;
-    g.fillRect(0, lugeH - 5, B, 5);
-
-    g.fillStyle = 'rgba(242,221,160,.75)';
-    g.font = '700 ' + Math.max(11, B * 0.03) + 'px "Playfair Display", Georgia, serif';
-    g.fillText(b.harMad ? 'K Ø K K E N' : 'B A R E N', B / 2, lugeH * 0.24);
-
-    if (b.harMad){
-      g.font = Math.round(Math.min(B, H) * 0.075) + 'px ' + EMOJI_SKRIFT;
-      g.globalAlpha = 0.9;
-      g.fillText('👨‍🍳', B * 0.13, lugeH * 0.68);
-      g.globalAlpha = 0.75;
-      g.font = Math.round(Math.min(B, H) * 0.05) + 'px ' + EMOJI_SKRIFT;
-      g.fillText('🔔', B * 0.87, lugeH * 0.72);
-      g.globalAlpha = 1;
-    } else {
-      // Flasker og glas på hylden bag baren
-      g.globalAlpha = 0.7;
-      g.font = Math.round(Math.min(B, H) * 0.05) + 'px ' + EMOJI_SKRIFT;
-      ['🫙','🍶','🧉','🫗','🍯','🧊'].forEach((e, i) => {
-        g.fillText(e, B * (0.12 + i * 0.152), lugeH * 0.68);
-      });
-      g.globalAlpha = 1;
-    }
-    g.fillStyle = 'rgba(217,180,91,.18)';
-    g.fillRect(B * 0.22, lugeH * 0.93, B * 0.56, 3);
-
-    // Bardisken med stationerne
-    if (b.harDrikke){
-      const bY = H * 0.185, bH = H * 0.10;
-      const disk = g.createLinearGradient(0, bY, 0, bY + bH);
-      disk.addColorStop(0, '#4a2c19');
-      disk.addColorStop(1, '#241509');
-      g.fillStyle = disk;
-      rundRektG(g, B * 0.04, bY, B * 0.92, bH, 14);
-      g.fill();
-      g.strokeStyle = 'rgba(217,180,91,.45)';
-      g.lineWidth = 2;
-      g.stroke();
-      g.fillStyle = 'rgba(242,221,160,.5)';
-      g.fillRect(B * 0.04, bY, B * 0.92, 2);
+    // Hylden, hvor kollegaen henter
+    if (BANER[bane].hjælper && BANER[bane].hjælper.leverer){
+      const hy = HYLDEPLADS.y * H;
+      g.fillStyle = 'rgba(217,180,91,.05)';
+      g.fillRect(B * 0.18, hy - H * 0.035, B * 0.64, H * 0.07);
+      g.fillStyle = 'rgba(217,180,91,.22)';
+      g.fillRect(B * 0.18, hy + H * 0.035, B * 0.64, 1);
+      skiltetekst(g, 'A F H E N T N I N G', B / 2, hy - H * 0.048,
+                  Math.max(8, B * 0.022), 'rgba(154,138,117,.75)');
     }
 
-    // Tæppe under bordene
-    g.save();
-    const tæppe = g.createRadialGradient(B / 2, H * 0.58, 10, B / 2, H * 0.58, B * 0.5);
-    tæppe.addColorStop(0, 'rgba(176,82,47,.10)');
-    tæppe.addColorStop(1, 'rgba(176,82,47,0)');
-    g.fillStyle = tæppe;
-    g.beginPath(); g.ellipse(B / 2, H * 0.58, B * 0.44, H * 0.21, 0, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = 'rgba(217,180,91,.10)';
-    g.lineWidth = 2;
-    g.stroke();
-    g.restore();
+    // Blødt lys over spisesalen, så gulvet ikke står som en sort flade
+    const sal = g.createRadialGradient(B / 2, H * 0.50, 10, B / 2, H * 0.50, B * 0.75);
+    sal.addColorStop(0, 'rgba(217, 180, 91, .055)');
+    sal.addColorStop(1, 'rgba(217, 180, 91, 0)');
+    g.fillStyle = sal;
+    g.fillRect(0, H * 0.16, B, H * 0.76);
 
-    // Pynt
-    g.save();
-    g.font = Math.round(Math.min(B, H) * 0.08) + 'px ' + EMOJI_SKRIFT;
-    g.globalAlpha = 0.85;
-    g.fillText('🪴', B * 0.08, H * 0.83);
-    g.fillText('🪴', B * 0.92, H * 0.83);
-    g.globalAlpha = 0.45;
-    g.font = Math.round(Math.min(B, H) * 0.06) + 'px ' + EMOJI_SKRIFT;
-    g.fillText(bane === 1 ? '🕯️' : '🖼️', B * 0.09, H * 0.36);
-    g.fillText(bane === 1 ? '🕯️' : '🖼️', B * 0.91, H * 0.36);
-    g.restore();
-
-    // Døren
-    const dørY = H * 0.955;
-    const dør = g.createLinearGradient(0, dørY, 0, H);
-    dør.addColorStop(0, '#2a1c12');
-    dør.addColorStop(1, '#120c08');
-    g.fillStyle = dør;
-    g.fillRect(0, dørY, B, H - dørY);
-    g.fillStyle = 'rgba(217,180,91,.5)';
-    g.fillRect(0, dørY, B, 2);
-    g.fillStyle = 'rgba(242,221,160,.65)';
-    g.font = '700 ' + Math.max(9, B * 0.026) + 'px "Playfair Display", Georgia, serif';
-    g.fillText('V E L K O M M E N', B / 2, (dørY + H) / 2 + 1);
-
-    const dørLys = g.createLinearGradient(0, dørY, 0, H * 0.78);
-    dørLys.addColorStop(0, 'rgba(242,221,160,.14)');
-    dørLys.addColorStop(1, 'rgba(242,221,160,0)');
-    g.fillStyle = dørLys;
-    g.fillRect(B * 0.2, H * 0.78, B * 0.6, dørY - H * 0.78);
-
-    vignet(g);
-    guldRamme(g);
+    // Døren forneden
+    const dørY = H * 0.93;
+    hårlinje(g, dørY, 0.22);
+    skiltetekst(g, 'V E L K O M M E N', B / 2, (dørY + H) / 2,
+                Math.max(8, B * 0.024), 'rgba(154,138,117,.7)');
   }
-
-  function rundRektG(g, x, y, b, h, r){
-    const rr = Math.min(r, b / 2, h / 2);
-    g.beginPath();
-    g.moveTo(x + rr, y);
-    g.arcTo(x + b, y, x + b, y + h, rr);
-    g.arcTo(x + b, y + h, x, y + h, rr);
-    g.arcTo(x, y + h, x, y, rr);
-    g.arcTo(x, y, x + b, y, rr);
-    g.closePath();
-  }
-
-  const BARLINJE = 0.155;                    // hvor bartenderen står bag disken
-  const HYLDEPLADS = { x:0.5, y:0.335 };     // hvor kollegaen henter færdige drikkevarer
-  const HVILE = { x:0.5, y:0.80 };           // kollegaens plads, når der ikke er noget
 
   const gulv = {
     id: 'gulv',
@@ -1823,10 +1562,10 @@
     tælleNavn: 'Gæster',
     intro: 'Tre vagter med hver sit arbejde. Tryk der, hvor der er brug for dig — men husk, at det tager tid at gå.',
     regler: [
-      ['🍔', '<b>Frokost:</b> du gør det hele — tager imod, tager bestillinger, henter mad og serverer.'],
-      ['🥤', '<b>Bar:</b> du bliver bag baren og laver drikkevarer — en kollega løber gulvet.'],
-      ['🤒', '<b>Aften:</b> der er sygemelding. Du er alene med døren, baren, køkkenet og gæsterne.'],
-      ['❤️', 'Bakken bærer to — tre om aftenen. Fem glade gæster i træk giver et liv tilbage.'],
+      ['👆', 'Tryk der, hvor der er brug for dig. <b>Tjeneren går selv derhen</b> — men det tager tid.'],
+      ['✨', '<b>Guldkant</b> betyder: her venter nogen på dig. <b>Rød stribe</b>: gæsten er ved at give op.'],
+      ['🍽️', 'Bakken bærer <b>to ting</b> — tre om aftenen. Planlæg turen, så du slipper for at gå forgæves.'],
+      ['❤️', 'Fem glade gæster i træk giver et liv tilbage.'],
     ],
 
     get baggrund(){ return 'gulv' + kerne.niveau; },
@@ -1848,6 +1587,7 @@
       this.tilAnkomst = 1.2; this.næsteId = 1; this.betjente = 0; this.turBonus = 0; this.glade = 0;
       this.vagtTid = 0; this.rushSagt = false;
       this.sætHjælper();
+      sætLayout(this.bane());
       this.hud();
     },
 
@@ -1869,6 +1609,7 @@
         effekt(0.5, 0.55, 'Aftentillæg +' + Math.round((b.tillæg - 1) * 100) + '%', '#f2dda0', 0.4);
       }
       this.sætHjælper();
+      sætLayout(b);
 
       // Vagtskifte: rummet får en frisk start. Uden det bliver overleveringen
       // en klippe — gæsterne står midt i noget, kollegaens rolle skifter, og
@@ -1919,25 +1660,10 @@
     },
 
     hud(){
+      // Køen, bestillingerne og bakken kan ses på selve skærmen — HUD'en gentager
+      // dem ikke. Her står kun, hvilken vagt man er på.
       elOpskriftNavn.textContent = this.bane().navn;
-      elOpskriftNavn.style.maxWidth = 'none';
-      elOpskriftListe.dataset.lang = 0;
-      const tal = (ikon, n) => '<span style="font-size:.92rem;margin-left:7px">' + ikon +
-        '</span><span style="font-size:.78rem;font-weight:700">' + n + '</span>';
-      const venter = this.gæster.filter(g => g.tilstand === 'dør').length;
-      const bestil = this.gæster.filter(g => g.tilstand === 'venter').length;
-      if (this.hjælperLeverer()){
-        // Barvagt: kun baren er spillerens — bestillinger og hylde
-        elOpskriftListe.innerHTML = tal('🥤', bestil) + tal('🍸', this.hylde.length);
-      } else {
-        const bakke = this.bakke.length
-          ? this.bakke.map(p => p.slags === 'mad' ? '🍔' : DRIKKE[p.drik].emoji).join('')
-          : '–';
-        elOpskriftListe.innerHTML =
-          '<span style="font-size:.78rem;font-weight:700;opacity:.75">🍽️</span>' +
-          '<span style="font-size:1rem">' + bakke + '</span>' +
-          tal('🚪', venter) + tal('🙋', bestil);
-      }
+      elOpskriftListe.innerHTML = '';
     },
 
     ledigtBord(){
@@ -2095,7 +1821,7 @@
       if (h.bærer){
         const g = h.bærer.til;
         if (this.gæster.includes(g) && g.tilstand === 'venter'){
-          return this.hjælperGå({ type:'aflever' }, BORDPLADSER[g.bord]);
+          return this.hjælperGå({ type:'aflever' }, vedBord(g.bord));
         }
         h.bærer = null;
       }
@@ -2118,12 +1844,12 @@
       // 3) bestillinger
       if (kan.tager){
         const g = this.gæster.filter(x => x.tilstand === 'bestille').sort((a, b) => a.tål - b.tål)[0];
-        if (g) return this.hjælperGå({ type:'tag', gæst:g }, BORDPLADSER[g.bord]);
+        if (g) return this.hjælperGå({ type:'tag', gæst:g }, vedBord(g.bord));
       }
       // 4) betaling
       if (kan.kasserer){
         const g = this.gæster.filter(x => x.tilstand === 'betale').sort((a, b) => a.tål - b.tål)[0];
-        if (g) return this.hjælperGå({ type:'kasser', gæst:g }, BORDPLADSER[g.bord]);
+        if (g) return this.hjælperGå({ type:'kasser', gæst:g }, vedBord(g.bord));
       }
       // 5) tag imod ved døren
       if (kan.sætter){
@@ -2187,7 +1913,7 @@
         if (!g || bord < 0) return;
         h.følger = g;
         g.bord = bord;
-        this.hjælperGå({ type:'sæt', gæst:g }, BORDPLADSER[bord]);
+        this.hjælperGå({ type:'sæt', gæst:g }, vedBord(bord));
         return;
       }
 
@@ -2258,7 +1984,7 @@
         if (!gæst || bord < 0) return;
         t.følger = gæst;
         gæst.bord = bord;
-        this.gåTil({ type:'sæt', gæst }, BORDPLADSER[bord]);
+        this.gåTil({ type:'sæt', gæst }, vedBord(bord));
         return;
       }
 
@@ -2375,12 +2101,10 @@
       };
 
       if (this.måTrykke('bord')){
-        for (let i = 0; i < this.antalBorde(); i++) prøv({ type:'bord', bord:i }, BORDPLADSER[i]);
+        for (let i = 0; i < this.antalBorde(); i++) prøv({ type:'bord', bord:i }, BORDPLADSER[i], vedBord(i));
         prøv({ type:'dør' }, DØR);
       }
-      if (this.måTrykke('luge') && (b.harMad || this.klar.length || this.boner.length)){
-        prøv({ type:'luge' }, LUGE);
-      }
+      if (this.måTrykke('luge') && b.harMad) prøv({ type:'luge' }, LUGE);
       if (this.måTrykke('station')){
         // bartenderen går langs baren, ikke ned på gulvet
         STATIONER.forEach(s => prøv({ type:'station', drik:s.drik }, s,
@@ -2410,243 +2134,182 @@
           ' og nåede ' + this.bane().navn + '.';
     },
 
-    /* ---------- tegning ---------- */
+    /* ---------- tegning ----------
+       Regel: guld betyder "her er der brug for dig", rust betyder "det haster".
+       Alt andet holdes i baggrundens toner, så øjet kun trækkes mod det ene sted. */
+    kræver(g){
+      if (!this.måTrykke('bord')) return false;
+      if (g.tilstand === 'bestille' || g.tilstand === 'betale') return true;
+      if (g.tilstand === 'venter'){
+        return this.bakke.some(pl => g.ønske.slags === 'mad'
+          ? (pl.slags === 'mad' && pl.gæst === g)
+          : (pl.slags === 'drikke' && pl.drik === g.ønske.nr));
+      }
+      return false;
+    },
+
+    kort(x, y, b, h, kant, fyld){
+      ctx.save();
+      ctx.fillStyle = fyld || '#1c1610';
+      rundRekt(ctx, x - b / 2, y - h / 2, b, h, Math.min(h / 2, 10));
+      ctx.fill();
+      if (kant){
+        ctx.strokeStyle = kant;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.restore();
+    },
+
+    stribe(x, y, b, del, farve){
+      ctx.save();
+      ctx.fillStyle = 'rgba(244,234,217,.12)';
+      rundRekt(ctx, x - b / 2, y, b, 3, 1.5);
+      ctx.fill();
+      ctx.fillStyle = farve;
+      rundRekt(ctx, x - b / 2, y, Math.max(0, b * klem(del, 0, 1)), 3, 1.5);
+      ctx.fill();
+      ctx.restore();
+    },
+
+    tegnFlise(f, r){
+      const x = f.x * B, y = f.y * H;
+      const b = Math.min(B / FLISER.length - r * 0.5, r * 3.2);
+      const h = r * 2.5;
+      const erStation = 'drik' in f;
+      const drik = f.drik;
+
+      const ønsket = erStation ? !!this.ventendePåDrik(drik) : this.klar.length > 0;
+      const hælder = erStation && this.tjener.hælder && this.tjener.hælder.drik === drik;
+
+      this.kort(x, y, b, h, ønsket || hælder ? 'rgba(217,180,91,.85)' : 'rgba(217,180,91,.20)',
+                ønsket ? 'rgba(217,180,91,.10)' : '#191410');
+      tegnSprite(erStation ? DRIKKE[drik].emoji : '🍽️', x, y - r * 0.15, r * 1.35);
+
+      if (hælder){
+        const del = 1 - this.tjener.hælder.tid / this.tjener.hælder.samlet;
+        this.stribe(x, y + r * 0.8, b * 0.6, del, '#d9b45b');
+      } else if (!erStation){
+        // lugen: hvad der er klar, og hvad køkkenet er i gang med
+        if (this.klar.length) this.taelPille(x + b * 0.32, y - h * 0.34, this.klar.length, '#d9b45b', '#1a1409', r);
+        if (this.boner.length) this.taelPille(x - b * 0.32, y - h * 0.34, this.boner.length, 'rgba(154,138,117,.5)', '#f4ead9', r);
+      }
+    },
+
+    taelPille(x, y, tal, bagfarve, tekstfarve, r){
+      ctx.save();
+      ctx.fillStyle = bagfarve;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = tekstfarve;
+      ctx.font = '800 ' + Math.max(9, r * 0.5) + 'px "Baloo 2", system-ui, sans-serif';
+      ctx.fillText(String(tal), x, y + r * 0.02);
+      ctx.restore();
+    },
+
+    tegnFigur(f, emoji, r, ring, bærer){
+      const x = f.x * B, y = f.y * H;
+      ctx.save();
+      ctx.fillStyle = ring;
+      ctx.beginPath();
+      ctx.ellipse(x, y + r * 0.92, r * 0.7, r * 0.22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      if (f.følger) tegnSprite(f.følger.ansigt, x - r * 1.05, y + r * 0.2, r * 1.4);
+      tegnSprite(emoji, x, y, r * 2);
+
+      if (bærer && bærer.length){
+        const b = r * (0.95 * bærer.length + 0.5);
+        const by = y + r * 1.35;
+        this.kort(x, by, b, r * 1.15, 'rgba(217,180,91,.35)');
+        bærer.forEach((ting, i) => {
+          const px = x + (i - (bærer.length - 1) / 2) * r * 0.95;
+          tegnSprite(ting.ikon, px, by, r * 0.85);
+          if (ting.bord) this.taelPille(px + r * 0.36, by + r * 0.38, ting.bord, '#b0522f', '#fff6e2', r * 0.8);
+        });
+      }
+    },
+
     tegn(){
       const r = radius();
-      const bordR = Math.min(B, H) * 0.072;
-      const b = this.bane();
+      const bordR = Math.min(B, H) * 0.062;
 
-      // Bestillingssedler bag baren, så bartenderen kan se, hvad der skal laves
-      if (this.hjælperLeverer()){
-        const sedler = this.gæster.filter(g => g.tilstand === 'venter' && g.ønske.slags === 'drikke');
-        sedler.slice(0, 5).forEach((g, i) => {
-          const x = (0.5 + (i - (Math.min(sedler.length, 5) - 1) / 2) * 0.175) * B;
-          const y = H * 0.062;
-          ctx.save();
-          ctx.fillStyle = 'rgba(14,11,9,.9)';
-          ctx.strokeStyle = 'rgba(217,180,91,.6)';
-          ctx.lineWidth = 1.5;
-          rundRekt(ctx, x - r * 0.72, y - r * 0.62, r * 1.44, r * 1.5, r * 0.28);
-          ctx.fill(); ctx.stroke();
-          ctx.restore();
-          tegnSprite(g.ønske.ikon, x, y - r * 0.12, r * 0.95);
-          this.tålBar(x, y + r * 0.52, r * 1.1, g.tål);
-          this.bordMærke(x + r * 0.55, y - r * 0.5, g.bord + 1, r * 0.85);
-        });
-      }
+      // Arbejdsrækken
+      FLISER.forEach(f => this.tegnFlise(f, r));
 
-      // Barens stationer
-      if (b.harDrikke){
-        STATIONER.forEach(s => {
-          const x = s.x * B, y = s.y * H;
-          const hælder = this.tjener.hælder && this.tjener.hælder.drik === s.drik;
-          const ønsket = !!this.ventendePåDrik(s.drik);
-          ctx.save();
-          ctx.fillStyle = hælder ? 'rgba(242,221,160,.22)' : (ønsket ? 'rgba(176,82,47,.22)' : 'rgba(242,221,160,.08)');
-          ctx.strokeStyle = ønsket ? 'rgba(242,221,160,.9)' : 'rgba(217,180,91,.5)';
-          ctx.lineWidth = ønsket ? 2.5 : 1.5;
-          rundRekt(ctx, x - r * 0.95, y - r * 0.8, r * 1.9, r * 1.6, r * 0.4);
-          ctx.fill(); ctx.stroke();
-          ctx.restore();
-          tegnSprite(DRIKKE[s.drik].emoji, x, y - r * 0.1, r * 1.3);
-          if (hælder){
-            const del = 1 - this.tjener.hælder.tid / this.tjener.hælder.samlet;
-            ctx.save();
-            ctx.fillStyle = 'rgba(10,8,6,.7)';
-            rundRekt(ctx, x - r * 0.7, y + r * 0.55, r * 1.4, r * 0.22, r * 0.11);
-            ctx.fill();
-            ctx.fillStyle = '#f2dda0';
-            rundRekt(ctx, x - r * 0.7, y + r * 0.55, r * 1.4 * del, r * 0.22, r * 0.11);
-            ctx.fill();
-            ctx.restore();
-          }
-        });
-      }
+      // Færdige drikkevarer klar til afhentning
+      this.hylde.forEach((d, i) => {
+        const x = (HYLDEPLADS.x + (i - (this.hylde.length - 1) / 2) * 0.14) * B;
+        tegnSprite(DRIKKE[d.drik].emoji, x, HYLDEPLADS.y * H, r * 1.2);
+      });
 
-      // Færdige drikkevarer på afhentningshylden
-      if (this.hylde.length){
-        const y = HYLDEPLADS.y * H;
-        ctx.save();
-        ctx.fillStyle = 'rgba(242,221,160,.10)';
-        rundRekt(ctx, (HYLDEPLADS.x - 0.24) * B, y - r * 0.7, 0.48 * B, r * 1.3, r * 0.3);
-        ctx.fill();
-        ctx.restore();
-        this.hylde.forEach((d, i) => {
-          const x = (HYLDEPLADS.x + (i - (this.hylde.length - 1) / 2) * 0.13) * B;
-          tegnSprite(DRIKKE[d.drik].emoji, x, y, r * 1.2);
-        });
-      }
-
-      // Borde med gæster
+      // Borde
       for (let i = 0; i < BORDPLADSER.length; i++){
         const p = BORDPLADSER[i];
         const x = p.x * B, y = p.y * H;
-        const aktivBord = i < this.antalBorde();
+        const åbent = i < this.antalBorde();
+        const gæst = this.gæster.find(g => g.bord === i);
+        const skjul = gæst && (gæst === this.tjener.følger || (this.hjælper && gæst === this.hjælper.følger));
+        const brug = gæst && !skjul && this.kræver(gæst);
 
         ctx.save();
-        ctx.globalAlpha = aktivBord ? 1 : 0.22;
-        ctx.fillStyle = '#241812';
-        ctx.strokeStyle = 'rgba(217,180,91,.25)';
-        ctx.lineWidth = 1.5;
-        [-1, 1].forEach(side => {
-          ctx.beginPath();
-          ctx.ellipse(x + side * bordR * 1.5, y + bordR * 0.1, bordR * 0.34, bordR * 0.26, 0, 0, Math.PI * 2);
-          ctx.fill(); ctx.stroke();
-        });
-        ctx.fillStyle = 'rgba(0,0,0,.5)';
-        ctx.beginPath(); ctx.ellipse(x, y + bordR * 0.34, bordR * 1.02, bordR * 0.4, 0, 0, Math.PI * 2); ctx.fill();
-        const plade = ctx.createLinearGradient(x - bordR, y - bordR, x + bordR, y + bordR);
-        plade.addColorStop(0, '#33241a');
-        plade.addColorStop(1, '#170f0b');
-        ctx.fillStyle = plade;
-        ctx.beginPath(); ctx.ellipse(x, y, bordR, bordR * 0.74, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(217,180,91,.55)';
+        ctx.globalAlpha = åbent ? 1 : 0.28;
+        ctx.fillStyle = '#1c1610';
+        ctx.beginPath(); ctx.ellipse(x, y, bordR, bordR * 0.7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.lineWidth = brug ? 2 : 1;
+        ctx.strokeStyle = brug ? '#d9b45b' : 'rgba(217,180,91,.22)';
         ctx.stroke();
-        ctx.fillStyle = 'rgba(242,221,160,.6)';
-        ctx.font = '800 ' + Math.max(12, bordR * 0.62) + 'px "Baloo 2", system-ui, sans-serif';
-        ctx.fillText(String(i + 1), x, y + bordR * 0.04);
+        ctx.fillStyle = åbent ? 'rgba(154,138,117,.85)' : 'rgba(154,138,117,.5)';
+        ctx.font = '700 ' + Math.max(10, bordR * 0.5) + 'px "Baloo 2", system-ui, sans-serif';
+        ctx.fillText(åbent ? String(i + 1) : 'lukket', x, y + bordR * 0.03);
         ctx.restore();
 
-        const gæst = this.gæster.find(g => g.bord === i);
-        if (!gæst || gæst === this.tjener.følger || (this.hjælper && gæst === this.hjælper.følger)) continue;
+        if (!gæst || skjul) continue;
 
-        const gy = y - bordR * 1.35;
-        tegnSprite(gæst.ansigt, x, gy, r * 1.8);
-        this.tålBar(x, gy - r * 1.05, r * 1.8, gæst.tål);
+        const gy = y - bordR * 1.5;
+        tegnSprite(gæst.ansigt, x, gy, r * 1.7);
 
-        const boble = BOBLER[gæst.tilstand];
-        if (boble){
-          const vis = (gæst.tilstand === 'bestille' || gæst.tilstand === 'venter');
-          const bred = vis ? r * 2.2 : r * 1.4;
-          const bx = x + bordR * 1.25 + bred / 2 - r * 0.5;
-          const by = gy - r * 0.35;
-          ctx.save();
-          ctx.fillStyle = 'rgba(16,12,9,.92)';
-          ctx.strokeStyle = 'rgba(217,180,91,.6)';
-          ctx.lineWidth = 1.5;
-          rundRekt(ctx, bx - bred / 2, by - r * 0.62, bred, r * 1.24, r * 0.5);
-          ctx.fill(); ctx.stroke();
-          ctx.restore();
-          if (vis){
-            tegnSprite(boble, bx - bred * 0.22, by, r * 0.9);
-            tegnSprite(gæst.ønske.ikon, bx + bred * 0.24, by, r * 0.9);
-          } else {
-            tegnSprite(boble, bx, by, r * 0.95);
-          }
+        // Ét kort pr. gæst: hvad de venter på, og hvor længe de gider
+        const vis = (gæst.tilstand === 'bestille' || gæst.tilstand === 'venter');
+        const kb = vis ? r * 2.3 : r * 1.5;
+        const kx = x, ky = gy - r * 1.45;
+        const haster = gæst.tål < 0.3;
+        this.kort(kx, ky, kb, r * 1.25, brug ? 'rgba(217,180,91,.9)' : (haster ? 'rgba(176,82,47,.9)' : 'rgba(217,180,91,.22)'));
+        if (vis){
+          tegnSprite(BOBLER[gæst.tilstand], kx - kb * 0.23, ky - r * 0.08, r * 0.85);
+          tegnSprite(gæst.ønske.ikon, kx + kb * 0.23, ky - r * 0.08, r * 0.85);
+        } else {
+          tegnSprite(BOBLER[gæst.tilstand], kx, ky - r * 0.08, r * 0.9);
         }
+        this.stribe(kx, ky + r * 0.42, kb * 0.72, gæst.tål,
+                    gæst.tål > 0.5 ? '#d9b45b' : (gæst.tål > 0.25 ? '#d97a4e' : '#c33b22'));
       }
 
-      // Gæster ved døren
+      // Køen ved døren
       const kø = this.gæster.filter(g => g.tilstand === 'dør' && g !== this.tjener.følger &&
                                          !(this.hjælper && g === this.hjælper.følger));
       kø.forEach((g, i) => {
-        const x = (DØR.x + (i - (kø.length - 1) / 2) * 0.18) * B;
+        const x = (DØR.x + (i - (kø.length - 1) / 2) * 0.17) * B;
         const y = DØR.y * H;
-        tegnSprite(g.ansigt, x, y, r * 1.7);
-        this.tålBar(x, y - r * 1.0, r * 1.7, g.tål);
+        tegnSprite(g.ansigt, x, y, r * 1.6);
+        this.stribe(x, y + r * 0.95, r * 1.5, g.tål,
+                    g.tål > 0.5 ? '#d9b45b' : (g.tål > 0.25 ? '#d97a4e' : '#c33b22'));
       });
 
-      // Køkkenet i gang
-      this.boner.forEach((bon, i) => {
-        const x = (0.30 + i * 0.13) * B;
-        const y = H * 0.042;
-        ctx.save();
-        ctx.lineWidth = Math.max(2.5, r * 0.14);
-        ctx.strokeStyle = 'rgba(246,236,219,.12)';
-        ctx.beginPath(); ctx.arc(x, y, r * 0.58, 0, Math.PI * 2); ctx.stroke();
-        ctx.strokeStyle = '#d9b45b';
-        ctx.beginPath();
-        ctx.arc(x, y, r * 0.58, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - bon.tid / bon.samlet));
-        ctx.stroke();
-        ctx.restore();
-        tegnSprite('🍳', x, y, r * 0.8);
-      });
-
-      // Klar mad i lugen
-      this.klar.forEach((p, i) => {
-        const x = (0.5 + (i - (this.klar.length - 1) / 2) * 0.16) * B;
-        const y = LUGE.y * H;
-        ctx.save();
-        ctx.fillStyle = 'rgba(242,221,160,.18)';
-        ctx.beginPath(); ctx.arc(x, y, r * 0.95, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-        tegnSprite('🍔', x, y, r * 1.4);
-        this.bordMærke(x + r * 0.72, y + r * 0.62, p.gæst.bord + 1, r);
-      });
-
-      // Kollegaen
+      // Kollegaen og spilleren
       if (this.hjælper){
-        const h = this.hjælper;
-        const hx = h.x * B, hy = h.y * H;
-        ctx.save();
-        ctx.fillStyle = 'rgba(176,82,47,.20)';
-        ctx.beginPath(); ctx.ellipse(hx, hy + r * 0.95, r * 0.85, r * 0.28, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-        if (h.følger) tegnSprite(h.følger.ansigt, hx - r * 1.1, hy + r * 0.15, r * 1.5);
-        tegnSprite('🤵‍♀️', hx, hy, r * 2.0);
-        if (h.bærer){
-          const ikon = h.bærer.slags === 'mad' ? '🍔' : DRIKKE[h.bærer.drik].emoji;
-          tegnSprite(ikon, hx + r * 0.95, hy - r * 0.5, r * 0.95);
-        }
+        const bærer = this.hjælper.bærer
+          ? [{ ikon: this.hjælper.bærer.slags === 'mad' ? '🍔' : DRIKKE[this.hjælper.bærer.drik].emoji,
+               bord: this.hjælper.bærer.til ? this.hjælper.bærer.til.bord + 1 : 0 }]
+          : [];
+        this.tegnFigur(this.hjælper, '🤵‍♀️', r, 'rgba(176,82,47,.18)', bærer);
       }
-
-      // Spilleren
-      const t = this.tjener;
-      const tx = t.x * B, ty = t.y * H;
-      ctx.save();
-      ctx.fillStyle = 'rgba(242,221,160,.14)';
-      ctx.beginPath(); ctx.ellipse(tx, ty + r * 0.95, r * 0.9, r * 0.3, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-      if (t.følger) tegnSprite(t.følger.ansigt, tx - r * 1.15, ty + r * 0.15, r * 1.5);
-      tegnSprite('🤵', tx, ty, r * 2.2);
-
-      if (this.bakke.length){
-        const bx = tx + r * 1.15, by = ty - r * 0.55;
-        ctx.save();
-        const g2 = ctx.createLinearGradient(bx - r * 0.9, by, bx + r * 0.9, by);
-        g2.addColorStop(0, '#96762a'); g2.addColorStop(0.5, '#f2dda0'); g2.addColorStop(1, '#96762a');
-        ctx.fillStyle = g2;
-        ctx.beginPath(); ctx.ellipse(bx, by + r * 0.34, r * 0.92, r * 0.3, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-        this.bakke.forEach((p, i) => {
-          const px = bx + (i - (this.bakke.length - 1) / 2) * r * 0.9;
-          if (p.slags === 'mad'){
-            tegnSprite('🍔', px, by, r * 1.0);
-            this.bordMærke(px + r * 0.4, by + r * 0.42, p.gæst.bord + 1, r * 0.8);
-          } else {
-            tegnSprite(DRIKKE[p.drik].emoji, px, by, r * 1.0);
-          }
-        });
-      }
-    },
-
-    tålBar(x, y, bred, tål){
-      const h = Math.max(5, bred * 0.13);
-      ctx.save();
-      ctx.fillStyle = 'rgba(10,8,6,.75)';
-      rundRekt(ctx, x - bred / 2, y - h / 2, bred, h, h / 2);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(217,180,91,.35)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.fillStyle = tål > 0.5 ? '#d9b45b' : (tål > 0.25 ? '#d97a4e' : '#c33b22');
-      rundRekt(ctx, x - bred / 2 + 1.5, y - h / 2 + 1.5, Math.max(0, (bred - 3) * klem(tål, 0, 1)), h - 3, (h - 3) / 2);
-      ctx.fill();
-      ctx.restore();
-    },
-
-    bordMærke(x, y, nummer, r){
-      ctx.save();
-      ctx.fillStyle = '#b0522f';
-      ctx.strokeStyle = 'rgba(242,221,160,.85)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.arc(x, y, r * 0.36, 0, Math.PI * 2);
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#fff6e2';
-      ctx.font = '800 ' + Math.max(9, r * 0.46) + 'px "Baloo 2", system-ui, sans-serif';
-      ctx.fillText(String(nummer), x, y + r * 0.02);
-      ctx.restore();
+      this.tegnFigur(this.tjener, '🤵', r, 'rgba(217,180,91,.18)',
+        this.bakke.map(p => ({
+          ikon: p.slags === 'mad' ? '🍔' : DRIKKE[p.drik].emoji,
+          bord: p.slags === 'mad' ? p.gæst.bord + 1 : 0,
+        })));
     },
   };
 
@@ -2741,7 +2404,7 @@
       const kort = document.createElement('div');
       kort.className = 'menukort';
       kort.style.marginTop = '18px';
-      kort.innerHTML = '<p class="eyebrow-menu">Vagterne — de kommer efter hinanden</p>' +
+      kort.innerHTML = '<p class="eyebrow-menu">Vagterne</p>' +
         BANER.map((b, i) =>
           '<div><b>' + b.ikon + ' ' + b.navn + (i > 0 ? ' — fra ' + NIVEAU_GRÆNSER[i] + ' point' : '') + '</b>' +
           '<em>' + b.tekst + '</em></div>').join('');
