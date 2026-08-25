@@ -1951,8 +1951,9 @@
 
       // Vagten bygger op: jo længere man er inde i den, jo tættere kommer gæsterne.
       // Uden det kan en rutineret spiller blive stående i det uendelige.
+      // Tiden mellem gæster falder 25% over fem minutter og ikke mere.
       this.vagtTid += dt;
-      const pres = Math.max(0.6, 1 - this.vagtTid / 300);
+      const pres = Math.max(0.75, 1 - this.vagtTid / 1200);
       if (!this.rushSagt && this.vagtTid > 150){
         this.rushSagt = true;
         råb('Der er run på! 🔥');
