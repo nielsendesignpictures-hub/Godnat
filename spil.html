@@ -886,7 +886,7 @@
       tekst:'Du står bag baren og laver drikkevarerne. Kollegaen tager imod gæsterne og henter dem på hylden.' },
 
     { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:6.4, tål:25, borde:4, madtid:6.5, hældetid:1.8,
-      hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true },
+      hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true, nødhjælp:3 },
       spillerMå:['bord','luge','station'], bakke:3, tillæg:1.3,
       tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer. Til gengæld får du den store bakke og aftentillæg på alle point.' },
   ];
@@ -2089,6 +2089,11 @@
         }
         // 2) mad i lugen
         if (this.klar.length) return this.hjælperGå({ type:'hentLuge' }, LUGE);
+      } else if (kan.nødhjælp && this.klar.length){
+        // Aftenvagt: hun løber selv maden ud, når køen af ventende vokser,
+        // så bestillingerne ikke hober sig op hurtigere, end de kan leveres
+        const venter = this.gæster.filter(x => x.tilstand === 'venter').length;
+        if (venter >= kan.nødhjælp) return this.hjælperGå({ type:'hentLuge' }, LUGE);
       }
 
       // 3) bestillinger
