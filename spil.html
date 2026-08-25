@@ -1895,10 +1895,8 @@
       const venter = this.gæster.filter(g => g.tilstand === 'dør').length;
       const bestil = this.gæster.filter(g => g.tilstand === 'venter').length;
       if (this.hjælperLeverer()){
-        // Barvagt: kun baren er spillerens
-        elOpskriftListe.innerHTML =
-          '<span style="font-size:.78rem;font-weight:700;opacity:.75">Bestillinger</span>' +
-          tal('🥤', bestil) + tal('🍸', this.hylde.length);
+        // Barvagt: kun baren er spillerens — bestillinger og hylde
+        elOpskriftListe.innerHTML = tal('🥤', bestil) + tal('🍸', this.hylde.length);
       } else {
         const bakke = this.bakke.length
           ? this.bakke.map(p => p.slags === 'mad' ? '🍔' : DRIKKE[p.drik].emoji).join('')
