@@ -877,18 +877,18 @@
   const BANER = [
     { navn:'Frokostvagt', ikon:'🍔', harMad:true,  harDrikke:false, ankomst:7.5, tål:30, borde:3, madtid:5.5, hældetid:1.6,
       hjælper:null,
-      spillerMå:['bord','luge'], bakke:2,
+      spillerMå:['bord','luge'], bakke:2, tillæg:1,
       tekst:'Frokost. Du er alene på gulvet: tag imod, tag bestillingen, hent maden og servér.' },
 
     { navn:'Bar-vagt',    ikon:'🥤', harMad:false, harDrikke:true,  ankomst:5.6, tål:26, borde:4, madtid:6.0, hældetid:1.7,
       hjælper:{ sætter:true, tager:true, leverer:true, kasserer:true },
-      spillerMå:['station'], bakke:2,
+      spillerMå:['station'], bakke:2, tillæg:1,
       tekst:'Du står bag baren og laver drikkevarerne. Kollegaen tager imod gæsterne og henter dem på hylden.' },
 
     { navn:'Aftenvagt',   ikon:'🌙', harMad:true,  harDrikke:true,  ankomst:6.4, tål:25, borde:4, madtid:6.5, hældetid:1.8,
       hjælper:{ sætter:true, tager:true, leverer:false, kasserer:true },
-      spillerMå:['bord','luge','station'], bakke:3,
-      tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer. Til gengæld får du den store bakke.' },
+      spillerMå:['bord','luge','station'], bakke:3, tillæg:1.3,
+      tekst:'Fuldt hus. Kollegaen tager imod og tager bestillingerne — du laver drikkevarer, henter mad og serverer. Til gengæld får du den store bakke og aftentillæg på alle point.' },
   ];
 
   const DRIKKE = [
@@ -1836,6 +1836,7 @@
     måTrykke(hvad){ return this.bane().spillerMå.includes(hvad); },
     hjælperLeverer(){ const h = this.bane().hjælper; return !!(h && h.leverer); },
     bakkeMax(){ return this.bane().bakke; },
+    tillæg(){ return this.bane().tillæg || 1; },
 
     start(){
       this.tjener = { x:0.5, y:0.78, målX:0.5, målY:0.78, opgave:null, travl:0, følger:null, hælder:null };
@@ -1858,6 +1859,9 @@
     nytNiveau(){
       const b = this.bane();
       råb(b.navn + ' ' + b.ikon);
+      if (b.tillæg > 1){
+        effekt(0.5, 0.5, 'Aftentillæg +' + Math.round((b.tillæg - 1) * 100) + '%', '#f2dda0', 0.5);
+      }
       this.sætHjælper();
       // Igangværende bestillinger bliver færdige — men gæster, der endnu ikke
       // har bestilt, ønsker det, den nye vagt kan levere.
@@ -2156,7 +2160,8 @@
     },
 
     /* ---------- handlinger, der er ens for begge ---------- */
-    tagBestilling(g, p, point){
+    tagBestilling(g, p, grundpoint){
+      const point = Math.round(grundpoint * this.tillæg());
       g.tilstand = 'venter';
       if (g.ønske.slags === 'mad'){
         const tid = this.bane().madtid;
@@ -2170,14 +2175,14 @@
     servér(g, p, faktor = 1){
       g.tilstand = 'spiser';
       g.spiseTid = g.ønske.slags === 'mad' ? 4.5 : 3.5;
-      const point = Math.round((20 + g.tål * 15) * faktor);
+      const point = Math.round((20 + g.tål * 15) * faktor * this.tillæg());
       lydRigtig();
       giv(point, p.x, p.y - 0.05, '+' + point);
       this.hud();
     },
 
     tagBetaling(g, p, faktor = 1){
-      const point = Math.round((15 + g.tål * 10) * faktor);
+      const point = Math.round((15 + g.tål * 10) * faktor * this.tillæg());
       const glad = g.tål > 0.6;
       this.gæster = this.gæster.filter(x => x !== g);
       this.betjente++;
@@ -2221,7 +2226,8 @@
         gæst.tilstand = 'bestille';
         gæst.tål = Math.min(1, gæst.tål + 0.25);
         blip(720, .09, 'triangle');
-        giv(10, BORDPLADSER[gæst.bord].x, BORDPLADSER[gæst.bord].y - 0.05, '+10');
+        const sætP = Math.round(10 * this.tillæg());
+        giv(sætP, BORDPLADSER[gæst.bord].x, BORDPLADSER[gæst.bord].y - 0.05, '+' + sætP);
         this.hud();
         return;
       }
@@ -2295,7 +2301,7 @@
           this.turBonus++;
           this.servér(gæst, p);
           if (this.turBonus === this.bakkeMax()){
-            giv(20, p.x, p.y - 0.12, 'Hele bakken! +20');
+            giv(Math.round(20 * this.tillæg()), p.x, p.y - 0.12, 'Hele bakken!');
             lydFærdig();
           }
           return;
