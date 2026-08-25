@@ -1951,9 +1951,10 @@
     opdater(dt){
       const b = this.bane();
 
-      // Vagten bygger op: jo længere man er inde i den, jo tættere kommer gæsterne.
-      // Uden det kan en rutineret spiller blive stående i det uendelige.
-      // Tiden mellem gæster falder 40% over otte minutter og ikke mere.
+      // Vagten bygger op over otte minutter: gæsterne kommer tættere OG bliver
+      // mere utålmodige. Kun det sidste presser en rutineret spiller — flere
+      // gæster kan ikke sættes ind, end der er borde til, så de venter bare
+      // ved døren. Det er tålmodigheden ved bordene, der er grænsen.
       this.vagtTid += dt;
       const pres = Math.max(0.6, 1 - this.vagtTid / 1200);
       if (!this.rushSagt && this.vagtTid > 150){
@@ -1982,7 +1983,7 @@
           g.spiseTid -= dt;
           if (g.spiseTid <= 0){ g.tilstand = 'betale'; g.tål = Math.min(1, g.tål + 0.35); }
         }
-        g.tål -= dt * (fart[g.tilstand] || 0) / b.tål;
+        g.tål -= dt * (fart[g.tilstand] || 0) / (b.tål * pres);
         if (g.tål <= 0 && this.tjener.følger !== g && !(this.hjælper && this.hjælper.følger === g)){
           const p = g.bord === null ? DØR : BORDPLADSER[g.bord];
           const fuldtHus = g.tilstand === 'dør' && this.ledigtBord() < 0;
